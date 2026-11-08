@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>寒衣节 · 遥祭</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%2317110c'/%3E%3Cpath d='M12 4c1.6 2.6 2.6 4.2 2.6 6a2.6 2.6 0 1 1-5.2 0c0-1.8 1-3.4 2.6-6z' fill='%23e8b25c'/%3E%3Cpath d='M12 13.5v3' stroke='%23e8b25c' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://miaoda.feishu.cn">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#17110c;
+  --bg2:#20170f;
+  --panel:rgba(238,202,142,.05);
+  --panel-2:rgba(238,202,142,.09);
+  --line:rgba(232,178,92,.34);
+  --line-soft:rgba(232,178,92,.16);
+  --gold:#e8b25c;
+  --gold-2:#f0cf8f;
+  --ember:#d9773f;
+  --ink:#f2e3c6;
+  --muted:#b2956d;
+  --radius:16px;
+  --ease:cubic-bezier(.22,.7,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:"Noto Serif SC","STSong","SimSun",serif;
+  color:var(--ink);
+  background:radial-gradient(120% 90% at 50% 112%,rgba(217,119,63,.20) 0%,rgba(23,17,12,0) 52%),
+             radial-gradient(130% 70% at 50% -10%,rgba(232,178,92,.10) 0%,rgba(23,17,12,0) 46%),
+             linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);
+  min-height:100%;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+#embers{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.7}
+#app{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:22px 18px 40px;min-height:100vh;display:flex;flex-direction:column}
+
+/* ===== 视图切换 ===== */
+.view{display:none;flex-direction:column;flex:1;animation:rise .55s var(--ease)}
+.view.active{display:flex}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ===== 顶部步骤条 ===== */
+.steps{display:none;justify-content:space-between;align-items:center;gap:6px;margin:4px 2px 26px}
+.steps.on{display:flex}
+.step{flex:1;height:2px;border-radius:2px;background:var(--line-soft);position:relative;transition:background .5s var(--ease)}
+.step.done{background:var(--gold)}
+.step.cur{background:linear-gradient(90deg,var(--gold),var(--gold-2))}
+.step i{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:7px;height:7px;border-radius:50%;background:var(--bg);border:1px solid var(--line);transition:.4s var(--ease)}
+.step.done i,.step.cur i{background:var(--gold);border-color:var(--gold)}
+
+/* ===== 通用文本 ===== */
+.kicker{font-size:13px;letter-spacing:.34em;color:var(--muted);text-align:center}
+h1{font-size:44px;font-weight:700;text-align:center;color:var(--gold);letter-spacing:.08em;line-height:1.3;margin:10px 0 6px}
+h2{font-size:24px;font-weight:600;color:var(--ink);text-align:center;letter-spacing:.05em;margin-bottom:6px}
+.sub{font-size:14px;color:var(--muted);text-align:center;max-width:34em;margin:0 auto}
+.lead{font-size:15px;color:var(--ink);text-align:center;line-height:2}
+
+/* ===== 烛火 ===== */
+.altar{display:flex;justify-content:center;margin:30px 0 18px}
+.candle{position:relative;width:34px;height:120px}
+.candle .wick{position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:8px;background:var(--ink);border-radius:2px}
+.flame{position:absolute;top:-34px;left:50%;transform:translateX(-50%);width:20px;height:34px;
+  background:radial-gradient(circle at 50% 70%,#fff3cf 0%,var(--gold-2) 34%,var(--ember) 72%,rgba(217,119,63,0) 100%);
+  border-radius:50% 50% 50% 50%/62% 62% 38% 38%;
+  transform-origin:50% 100%;
+  animation:flicker 2.4s ease-in-out infinite}
+@keyframes flicker{0%,100%{transform:translateX(-50%) scale(1) rotate(-2deg)}25%{transform:translateX(-50%) scale(1.06,.94) rotate(2deg)}60%{transform:translateX(-50%) scale(.94,1.06) rotate(-1deg)}}
+.candle .body{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:24px;height:100px;background:linear-gradient(180deg,#efe3c2,#d8c194);border-radius:7px 7px 5px 5px}
+.candle .glow{position:absolute;top:-44px;left:50%;transform:translateX(-50%);width:120px;height:120px;background:radial-gradient(circle,rgba(240,207,143,.22),rgba(240,207,143,0) 70%);border-radius:50%;pointer-events:none}
+
+/* ===== 按钮 ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;padding:0 22px;border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(232,178,92,.16),rgba(232,178,92,.05));color:var(--gold-2);
+  font-family:inherit;font-size:17px;letter-spacing:.18em;border-radius:999px;cursor:pointer;transition:.35s var(--ease)}
+.btn:hover{background:linear-gradient(180deg,rgba(232,178,92,.30),rgba(232,178,92,.12));transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:#241a10;font-weight:600;border-color:transparent;box-shadow:0 8px 26px rgba(232,178,92,.28)}
+.btn.primary:hover{background:linear-gradient(180deg,#f7ddab,var(--gold-2));box-shadow:0 10px 30px rgba(232,178,92,.38)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn.ghost{background:transparent;border-color:var(--line-soft);color:var(--muted);font-size:15px;letter-spacing:.1em}
+.btn-row{display:flex;gap:12px;margin-top:24px}
+.btn-row .btn{flex:1}
+.btns{display:flex;gap:10px;margin-top:24px}
+.btns .btn{flex:1}
+
+/* ===== 首页 ===== */
+#view-home{align-items:center;justify-content:center;text-align:center;padding-top:5vh}
+#view-home .seal{font-size:13px;letter-spacing:.4em;color:var(--gold);border:1px solid var(--line);display:inline-block;padding:6px 14px;border-radius:8px;margin-bottom:14px;background:rgba(217,119,63,.08)}
+#view-home .intro{max-width:32em;margin:14px auto 0}
+#view-home .home-actions{margin-top:34px;width:100%;max-width:360px}
+.home-links{display:flex;gap:10px;margin-top:12px;width:100%;max-width:360px}
+.home-links .btn{flex:1;font-size:14px;min-height:46px;padding:0 10px;letter-spacing:.06em}
+
+/* ===== 对象 ===== */
+.field{margin:26px 0 20px}
+.field label{display:block;font-size:14px;color:var(--muted);letter-spacing:.1em;margin-bottom:10px;text-align:center}
+.name-input{width:100%;height:56px;text-align:center;font-family:inherit;font-size:22px;letter-spacing:.06em;color:var(--ink);
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;outline:none;transition:.3s}
+.name-input:focus{border-color:var(--gold);background:var(--panel-2);box-shadow:0 0 0 3px rgba(232,178,92,.14)}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:16px}
+.chip{min-height:42px;padding:0 18px;display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:15px;color:var(--muted);
+  background:var(--panel);border:1px solid var(--line-soft);border-radius:999px;cursor:pointer;transition:.3s;line-height:1}
+.chip:hover{border-color:var(--line);color:var(--ink)}
+.chip.sel{background:var(--panel-2);border-color:var(--gold);color:var(--gold-2)}
+.chip .ico{width:18px;height:18px}
+
+/* ===== 地区 ===== */
+.region-grid{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.rgroup{display:flex;flex-direction:column;gap:8px}
+.rgroup-h{font-size:12px;color:var(--gold-2);letter-spacing:.18em;margin-top:4px;padding-left:2px}
+.rgroup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:520px){.rgroup-grid{grid-template-columns:repeat(3,1fr)}}
+.region-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 10px 12px;text-align:center;
+  background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--radius);cursor:pointer;transition:.3s var(--ease);user-select:none;min-height:0}
+.region-card:hover{border-color:var(--line)}
+.region-card.on{border-color:var(--gold);background:var(--panel-2);box-shadow:0 0 0 3px rgba(232,178,92,.12)}
+.mark{display:inline-flex;align-items:center;justify-content:center;flex:none;width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(145deg,#f7ecd2,#e8d4a8);color:#6a4a1a;font-size:15px;font-weight:700;
+  border:1px solid rgba(122,74,26,.45);box-shadow:0 1px 3px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.55)}
+.region-card .mark{width:40px;height:40px;font-size:17px}
+.region-card.on .mark{background:linear-gradient(145deg,#f9efd8,#eed9ae);border-color:var(--gold);box-shadow:0 0 0 2px rgba(232,178,92,.18),0 1px 3px rgba(0,0,0,.18)}
+.region-card .rn{font-size:15px;color:var(--ink)}
+.region-card .rt{font-size:11.5px;color:var(--muted);line-height:1.45}
+.region-tip{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.7}
+
+/* ===== 供品 ===== */
+.hint{font-size:13px;color:var(--muted);text-align:center;margin:6px 0 6px}
+.region-badge{display:flex;align-items:center;justify-content:center;gap:7px;font-size:13px;color:var(--gold);margin:2px 0 16px}
+.region-badge .mark{border-radius:8px;color:#6a4a1a;background:linear-gradient(145deg,#f7ecd2,#e8d4a8)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:520px){.grid{grid-template-columns:repeat(3,1fr)}}
+.item{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px 14px;
+  background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--radius);cursor:pointer;transition:.3s var(--ease);user-select:none}
+.item:hover{border-color:var(--line)}
+.item.on{border-color:var(--gold);background:var(--panel-2);box-shadow:0 0 0 3px rgba(232,178,92,.12)}
+.item .fig{width:56px;height:56px;position:relative}
+.item .fig svg{width:100%;height:100%;display:block}
+.item.on .fig{filter:drop-shadow(0 0 8px rgba(240,207,143,.35))}
+.item .nm{font-size:15px;color:var(--ink)}
+.item .u{font-size:12px;color:var(--muted)}
+.denom-wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin:2px 0}
+.denom-chip{min-height:24px;padding:0 8px;font-family:inherit;font-size:11px;color:var(--muted);
+  background:rgba(238,202,142,.05);border:1px solid var(--line-soft);border-radius:999px;cursor:pointer;transition:.25s;line-height:1}
+.denom-chip:hover{border-color:var(--line);color:var(--ink)}
+.denom-chip.sel{background:var(--panel-2);border-color:var(--gold);color:var(--gold-2)}
+/* 生动的供品堆 */
+.pile{position:relative;width:64px;height:40px;display:flex;align-items:flex-end;justify-content:center;margin-top:2px}
+.pile-empty{font-size:11px;color:var(--muted);opacity:.75;letter-spacing:.08em;padding-bottom:4px}
+.pile-i{position:absolute;bottom:calc(var(--i)*6px);left:50%;transform:translateX(-50%);
+  width:26px;height:26px;opacity:.92;animation:drop .32s var(--ease)}
+.pile-i svg{width:100%;height:100%;display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+@keyframes drop{0%{transform:translateX(-50%) translateY(-14px);opacity:0}100%{transform:translateX(-50%) translateY(0);opacity:.92}}
+.pile-more{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--gold-2);font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.pile-sub{position:absolute;top:6px;right:8px;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);
+  background:rgba(24,18,12,.35);color:var(--gold-2);font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.2s;font-family:inherit;z-index:2}
+.pile-sub:hover{background:rgba(232,178,92,.2)}
+.item .fig.big{width:52px;height:52px;margin-bottom:2px}
+.sum-bar{position:sticky;bottom:14px;margin-top:22px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:rgba(24,18,12,.92);border:1px solid var(--line);border-radius:999px;padding:8px 10px 8px 20px;backdrop-filter:blur(6px)}
+.sum-bar .cnt{font-size:13px;color:var(--muted)}
+.sum-bar .cnt b{color:var(--gold-2);font-size:16px}
+.sum-bar .btn{width:auto;min-height:44px;padding:0 26px;font-size:15px}
+
+/* ===== 焚化 ===== */
+#view-burn .burn-stage{position:relative;flex:1;min-height:400px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;margin-top:10px}
+#fireCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.papers{position:relative;z-index:2;display:flex;flex-wrap:wrap;justify-content:center;gap:14px;padding:14px 8px;margin-bottom:6px;width:100%}
+.pkind{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px 6px;border-radius:12px;
+  background:linear-gradient(160deg,#efe3c2,#d8bd8c);box-shadow:0 8px 18px rgba(0,0,0,.35);
+  transition:transform .4s var(--ease),opacity .5s var(--ease)}
+.pkind .fig{width:46px;height:46px}
+.pkind .fig svg{width:100%;height:100%;display:block}
+.pkind .pn{color:#4a341a;font-size:13px;font-weight:600}
+.pkind .n{color:#8a5a2a;font-weight:500;font-size:12px}
+/* 进炉动画：纸品飞向炉口（位移+缩小+旋转+微焰+淡出） */
+.pkind.fly{transition:transform 1.1s cubic-bezier(.5,-0.2,.6,1),opacity 1.1s linear;pointer-events:none;z-index:5}
+.pkind.fly::after{content:'';position:absolute;left:0;right:0;bottom:0;top:0;border-radius:12px;pointer-events:none;
+  background:radial-gradient(110% 80% at 50% 100%,rgba(255,180,90,.5),rgba(160,60,15,.12) 55%,transparent 80%)}
+.burn-cta{position:relative;z-index:3;width:100%;max-width:360px;margin:14px auto 0}
+.burn-tip{position:relative;z-index:3;text-align:center;font-size:13px;color:var(--muted);margin-top:12px;min-height:20px}
+.burn-ok{position:absolute;z-index:4;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+.burn-ok.show{display:flex;animation:rise .6s var(--ease)}
+.burn-ok .ck{width:74px;height:74px;border-radius:50%;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold-2);margin-bottom:12px;background:var(--panel)}
+.burn-ok h3{font-size:22px;color:var(--gold-2);letter-spacing:.1em;font-weight:600}
+
+/* ===== 寄语 ===== */
+.msg-area{width:100%;min-height:150px;margin:22px 0 16px;padding:18px;font-family:inherit;font-size:16px;line-height:1.9;color:var(--ink);
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;resize:vertical;outline:none;transition:.3s}
+.msg-area:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,178,92,.14)}
+.msg-preset{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.msg-preset .chip{font-size:13px;padding:0 14px}
+
+/* ===== 回执 ===== */
+#view-receipt .card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:32px 24px 28px;text-align:center;position:relative;margin-top:10px;overflow:hidden}
+#view-receipt .card::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 0%,rgba(232,178,92,.12),transparent 70%);pointer-events:none}
+.card .to{font-size:14px;color:var(--muted);letter-spacing:.2em}
+.card .name{font-size:32px;color:var(--gold-2);font-weight:700;margin:8px 0 4px;letter-spacing:.05em}
+.card .who{font-size:13px;color:var(--muted);margin-bottom:18px}
+.card .items{text-align:left;background:var(--panel-2);border:1px solid var(--line-soft);border-radius:12px;padding:14px 18px;margin-bottom:20px}
+.card .items .it{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:15px}
+.card .items .it:not(:last-child){border-bottom:1px dashed rgba(232,178,92,.16)}
+.card .items .it b{color:var(--gold-2);font-weight:600}
+.card .items .it span{color:var(--muted)}
+.card .mesg{font-size:15px;line-height:2;color:var(--ink);white-space:pre-wrap;margin-bottom:18px;font-style:normal}
+.card .mesg.blank{color:var(--muted);font-style:italic}
+.card .date{font-size:13px;color:var(--muted);letter-spacing:.08em}
+.card .seal-line{display:flex;align-items:center;justify-content:center;gap:12px;margin:20px 0 4px}
+.card .seal-line .ln{height:1px;width:44px;background:var(--line-soft)}
+.card .sent{font-size:15px;color:var(--gold);letter-spacing:.14em}
+.receipt-note{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.8}
+.receipt-note b{color:var(--muted);font-weight:600}
+
+/* ===== 各地风俗 ===== */
+.customs-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:16px 0 20px}
+.customs-nav .chip{border-radius:12px;padding:0 14px;min-height:42px;font-size:14px}
+.customs-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px 20px;margin-bottom:16px;animation:rise .5s var(--ease)}
+.customs-panel .c-region{font-size:20px;color:var(--gold-2);letter-spacing:.08em;display:flex;align-items:center;gap:10px;margin-bottom:12px;font-weight:600}
+.customs-panel .c-region .ico{width:26px;height:26px;color:var(--gold)}
+.customs-panel .c-proverb{font-size:14px;color:var(--gold);letter-spacing:.06em;margin-bottom:14px;border-left:2px solid var(--line);padding-left:12px;line-height:1.7}
+.customs-panel .c-desc{font-size:15px;line-height:1.95;color:var(--ink)}
+.customs-panel .c-src{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.6}
+.c-list{display:flex;flex-direction:column;gap:10px}
+.c-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:13px 14px;
+  background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--radius);cursor:pointer;
+  font-family:inherit;font-size:15px;color:var(--ink);transition:.25s var(--ease)}
+.c-item:hover{border-color:var(--line);background:var(--panel-2)}
+.c-item .ico{width:20px;height:20px;color:var(--gold);flex:none}
+.ci-nm{flex:none;font-weight:600}
+.ci-pv{flex:1;min-width:0;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v-ok{flex:none;font-size:10.5px;color:#8a9a6a;border:1px solid rgba(138,154,106,.5);padding:2px 7px;border-radius:999px;letter-spacing:.06em}
+.v-warn{flex:none;font-size:10.5px;color:#c9952f;border:1px solid rgba(201,149,47,.5);padding:2px 7px;border-radius:999px;letter-spacing:.06em}
+.c-tag{font-size:12px;color:var(--muted);font-weight:400;letter-spacing:0}
+.c-note{font-size:12.5px;color:var(--muted);line-height:1.7;margin-top:16px;border-top:1px dashed var(--line);padding-top:14px}
+.customs-note{font-size:12px;color:var(--muted);text-align:center;line-height:1.8;margin-top:4px}
+
+/* ===== 放天灯 ===== */
+#view-lantern .lantern-stage{position:relative;flex:1;min-height:380px;display:flex;align-items:center;justify-content:center;margin-top:8px;
+  border:1px solid var(--line-soft);border-radius:20px;overflow:hidden;
+  background:radial-gradient(130% 90% at 50% 18%,rgba(232,178,92,.10),rgba(23,17,12,0) 62%)}
+#lanternCanvas{position:absolute;inset:0;width:100%;height:100%}
+.lantern-msgbox{margin-top:14px}
+.lantern-msgbox .msg-area{min-height:90px;margin:10px 0 12px}
+.lantern-cta{position:relative;z-index:3;width:100%;max-width:360px;margin:12px auto 0}
+.lantern-note{position:relative;z-index:3;text-align:center;font-size:13px;color:var(--muted);margin-top:12px;min-height:20px}
+.lantern-done{position:absolute;z-index:4;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:20px}
+.lantern-done.show{display:flex;animation:rise .6s var(--ease)}
+.lantern-done .ck{width:74px;height:74px;border-radius:50%;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold-2);margin-bottom:12px;background:var(--panel)}
+.lantern-done h3{font-size:22px;color:var(--gold-2);letter-spacing:.1em;font-weight:600}
+.lantern-done .lm{font-size:14px;line-height:1.9;color:var(--ink);white-space:pre-wrap;max-width:30em;margin-top:8px}
+
+/* SVG 通用 */
+.svg-defs{position:absolute;width:0;height:0;overflow:hidden}
+.pico{display:block}
+</style>
+</head>
+<body>
+<canvas id="embers" aria-hidden="true"></canvas>
+<div id="app">
+
+  <!-- ===== 步骤条 ===== -->
+  <div class="steps" id="steps" aria-hidden="true">
+    <div class="step" data-step="1"><i></i></div>
+    <div class="step" data-step="2"><i></i></div>
+    <div class="step" data-step="3"><i></i></div>
+    <div class="step" data-step="4"><i></i></div>
+    <div class="step" data-step="5"><i></i></div>
+  </div>
+
+  <!-- ===== 首页 ===== -->
+  <section class="view active" id="view-home">
+    <div class="altar"><div class="candle"><div class="glow"></div><div class="flame"></div><div class="wick"></div><div class="body"></div></div></div>
+    <div class="seal">十月初一 · 寒衣节</div>
+    <h1>寒衣节 · 遥祭</h1>
+    <p class="intro lead">天气转寒，为远行的亲人送一身冬衣、寄一份思念。<br>城市里不便烧纸焚香，就让心意在云端点燃——<br>一炷心香，同样抵达。</p>
+    <div class="home-actions"><button class="btn primary" id="btn-start">开始祭奠</button></div>
+    <div class="home-links">
+      <button class="btn ghost" id="btn-customs">各地寒衣风俗</button>
+      <button class="btn ghost" id="btn-lantern">放一盏天灯</button>
+    </div>
+    <p class="kicker" style="margin-top:24px">慎终追远 · 绿色追思</p>
+  </section>
+
+  <!-- ===== 对象 ===== -->
+  <section class="view" id="view-object">
+    <h2>想祭奠谁？</h2>
+    <p class="sub">写下称呼或姓名，送出一份专属心意</p>
+    <div class="field">
+      <label for="name-input">称呼 / 姓名</label>
+      <input class="name-input" id="name-input" type="text" maxlength="20" placeholder="例如：爷爷" autocomplete="off">
+      <div class="chips" id="name-chips"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" data-back>返回</button>
+      <button class="btn primary" id="btn-object-next">下一步</button>
+    </div>
+  </section>
+
+  <!-- ===== 地区 ===== -->
+  <section class="view" id="view-region">
+    <h2>选择一方水土</h2>
+    <p class="sub">按当地风俗备礼，随故土的记忆追思</p>
+    <div class="region-grid" id="region-grid"></div>
+    <p class="region-tip" id="region-tip"></p>
+    <div class="btn-row">
+      <button class="btn ghost" data-back>返回</button>
+      <button class="btn primary" id="btn-region-next">下一步</button>
+    </div>
+  </section>
+
+  <!-- ===== 供品 ===== -->
+  <section class="view" id="view-offering">
+    <h2>备一份供品</h2>
+    <p class="sub">点击挑选，可用 + / − 调整份数</p>
+    <div class="hint" id="offer-hint"></div>
+    <div class="region-badge" id="region-badge"></div>
+    <div class="grid" id="offer-grid"></div>
+    <div class="sum-bar" id="sum-bar">
+      <div class="cnt" id="sum-cnt">已选 <b>0</b> 份</div>
+      <button class="btn primary" id="btn-offer-next">继续</button>
+    </div>
+    <div class="btn-row" style="margin-top:14px"><button class="btn ghost" data-back>返回</button></div>
+  </section>
+
+  <!-- ===== 焚化 ===== -->
+  <section class="view" id="view-burn">
+    <h2 id="burn-title">焚化供品</h2>
+    <p class="sub" id="burn-sub"></p>
+    <div class="burn-stage">
+      <canvas id="fireCanvas" aria-hidden="true"></canvas>
+      <div class="papers" id="papers"></div>
+      <div class="burn-ok" id="burn-ok">
+        <div class="ck"><svg viewBox="0 0 24 24" width="34" height="34" class="pico" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M4 12.5l5 5L20 6.5"/></svg></div>
+        <h3>心意已至</h3>
+        <p class="sub">愿所念之人，冬暖衣丰，安好无忧</p>
+        <div class="btn-row" style="max-width:320px;margin-top:18px"><button class="btn primary" id="btn-message-go">留下寄语</button></div>
+      </div>
+    </div>
+    <div class="burn-cta">
+      <button class="btn primary" id="btn-ignite">点火 · 焚烧</button>
+    </div>
+    <div class="burn-tip" id="burn-tip">一点火，念即达</div>
+    <div class="btn-row" style="margin-top:14px"><button class="btn ghost" data-back>返回</button></div>
+  </section>
+
+  <!-- ===== 寄语 ===== -->
+  <section class="view" id="view-message">
+    <h2>留一句想说的话</h2>
+    <p class="sub">可写下对TA的思念与近况（也可留空）</p>
+    <textarea class="msg-area" id="msg-area" maxlength="120" placeholder="例如：天冷了，记得添衣。我们都很好，勿念。"></textarea>
+    <div class="msg-preset" id="msg-preset"></div>
+    <div class="btn-row">
+      <button class="btn ghost" data-back>返回</button>
+      <button class="btn primary" id="btn-message-next">送出祝福</button>
+    </div>
+  </section>
+
+  <!-- ===== 回执 ===== -->
+  <section class="view" id="view-receipt">
+    <h2>遥祭回执</h2>
+    <div class="card">
+      <div class="to">寒衣节 · 遥寄</div>
+      <div class="name" id="r-name"></div>
+      <div class="who" id="r-who"></div>
+      <div class="items" id="r-items"></div>
+      <p class="mesg" id="r-mesg"></p>
+      <div class="seal-line"><span class="ln"></span><span class="sent">此念遥寄 · 春晖永沐</span><span class="ln"></span></div>
+      <div class="date" id="r-date"></div>
+    </div>
+    <p class="receipt-note">本页仅用于寄托哀思 · <b>倡导绿色、安全、文明祭祀</b><br>思念在，心意便在。天寒，也请多珍重。</p>
+    <div class="btn-row">
+      <button class="btn ghost" id="btn-again">再祭一位</button>
+      <button class="btn primary" id="btn-restart">重新祭奠</button>
+    </div>
+  </section>
+
+  <!-- ===== 各地风俗 ===== -->
+  <section class="view" id="view-customs">
+    <h2>各地寒衣风俗</h2>
+    <p class="sub">一方水土，一方追思。看看各地如何送寒衣</p>
+    <div class="customs-nav" id="customs-nav"></div>
+    <div class="customs-panel" id="customs-panel"></div>
+    <div class="btn-row">
+      <button class="btn ghost" data-customs-back>返回首页</button>
+    </div>
+  </section>
+
+  <!-- ===== 放天灯 ===== -->
+  <section class="view" id="view-lantern">
+    <h2>放一盏天灯</h2>
+    <p class="sub">写下祝愿，让思念随灯火升向夜空</p>
+    <div class="lantern-stage">
+      <canvas id="lanternCanvas" aria-hidden="true"></canvas>
+      <div class="lantern-done" id="lantern-done">
+        <div class="ck"><svg viewBox="0 0 24 24" width="34" height="34" class="pico" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M4 12.5l5 5L20 6.5"/></svg></div>
+        <h3>天灯已升空</h3>
+        <p class="sub">愿所念之人，冬暖衣丰，安好无忧</p>
+        <p class="lm" id="lantern-done-msg"></p>
+      </div>
+    </div>
+    <div class="lantern-msgbox">
+      <label class="sub" for="lantern-msg" style="display:block;text-align:center">在灯上写一句祝福</label>
+      <textarea class="msg-area" id="lantern-msg" maxlength="60" placeholder="例如：愿您在那边一切安好，勿念。"></textarea>
+      <div class="msg-preset" id="lantern-preset"></div>
+    </div>
+    <div class="lantern-cta">
+      <button class="btn primary" id="btn-launch-lantern">放飞天灯</button>
+    </div>
+    <div class="lantern-note" id="lantern-note">点一盏灯，愿思念抵达</div>
+    <div class="btn-row" style="margin-top:14px"><button class="btn ghost" data-back>返回</button></div>
+  </section>
+
+</div>
+
+<!-- SVG 纸扎造型（写实纸质感） -->
+<svg class="svg-defs" xmlns="http://www.w3.org/2000/svg">
+  <!-- 寒衣：纸糊中式棉袄（立领、对襟、宽袖、盘扣、衣摆） -->
+  <symbol id="p-hanyi" viewBox="0 0 64 64">
+    <g>
+      <!-- 衣身主体 -->
+      <path d="M10 14 L30 7 L34 7 L54 14 L54 20 L45 23 L43 34 L50 37 L54 50 L49 55 L40 55 L37 42 L32 42 L27 42 L24 55 L15 55 L10 50 L14 37 L21 34 L19 23 L10 20 Z" fill="#cfdbe8" stroke="#3a4a5a" stroke-width="1.6" stroke-linejoin="round"/>
+      <!-- 立领 -->
+      <path d="M27 8 L30 6 L34 6 L37 8 L35 14 L32 16 L29 14 Z" fill="#bcd0e0" stroke="#3a4a5a" stroke-width="1.3" stroke-linejoin="round"/>
+      <!-- 对襟中缝 -->
+      <path d="M32 16 L32 42" stroke="#3a4a5a" stroke-width="1.2"/>
+      <!-- 左袖 -->
+      <path d="M10 14 L3 10 L2 18 L9 25 L19 23 Z" fill="#d7e3ee" stroke="#3a4a5a" stroke-width="1.5" stroke-linejoin="round"/>
+      <!-- 右袖 -->
+      <path d="M54 14 L61 10 L62 18 L55 25 L45 23 Z" fill="#d7e3ee" stroke="#3a4a5a" stroke-width="1.5" stroke-linejoin="round"/>
+      <!-- 袖口 -->
+      <path d="M4 17 L3 19 L8 23" fill="none" stroke="#3a4a5a" stroke-width="1.3" stroke-linecap="round"/>
+      <path d="M60 17 L61 19 L56 23" fill="none" stroke="#3a4a5a" stroke-width="1.3" stroke-linecap="round"/>
+      <!-- 衣摆下缘 -->
+      <path d="M14 37 L11 54 M50 37 L53 54" stroke="#3a4a5a" stroke-width="1.2"/>
+      <!-- 盘扣（右襟） -->
+      <circle cx="34" cy="22" r="1.8" fill="#c0392b"/>
+      <circle cx="36" cy="30" r="1.8" fill="#c0392b"/>
+      <path d="M34 20.6 L38 22" stroke="#c0392b" stroke-width="1.1" stroke-linecap="round"/>
+      <path d="M36 28.6 L40 30" stroke="#c0392b" stroke-width="1.1" stroke-linecap="round"/>
+      <!-- 衣面缝线装饰 -->
+      <path d="M23 28 L27 28 M37 28 L41 28" stroke="#8fa6b8" stroke-width="1.1" stroke-linecap="round"/>
+    </g>
+  </symbol>
+  <!-- 纸元宝（金锭） -->
+  <symbol id="p-yuanbao" viewBox="0 0 64 64">
+    <g>
+      <path d="M14 32 Q22 20 32 25 Q42 20 50 32 L50 38 L14 38 Z" fill="#e6b04a" stroke="#8a5a1a" stroke-width="1.5"/>
+      <path d="M14 38 Q32 48 50 38 L50 40 Q32 50 14 40 Z" fill="#f3cd72" stroke="#8a5a1a" stroke-width="1.5"/>
+      <path d="M32 25 Q32 19 28 15 Q34 17 36 15 Q32 19 32 25 Z" fill="#c9952f" stroke="#8a5a1a" stroke-width="1"/>
+      <path d="M22 31 Q32 36 42 31" fill="none" stroke="#8a5a1a" stroke-width="1.1"/>
+      <path d="M28 33 L36 33 M30 36 L34 36" stroke="#a8701a" stroke-width="1"/>
+      <rect x="26" y="10" width="12" height="4" rx="1.5" fill="#c0392b" stroke="#7a2418" stroke-width="0.8"/>
+    </g>
+  </symbol>
+  <!-- 纸钱（沓冥币，可见面额） -->
+  <symbol id="p-zhiqian" viewBox="0 0 64 64">
+    <!-- 仿真冥币：竖版票面，参考真实纸币版式（银行名、面额、四角数字、编号、花纹、防伪线） -->
+    <g>
+      <rect x="16" y="5" width="32" height="54" rx="2" fill="#ead9a8" stroke="#6a4a1a" stroke-width="1.4"/>
+      <rect x="18.5" y="7.5" width="27" height="49" rx="1.5" fill="#f2e7c4" stroke="#9a7a3a" stroke-width="0.8"/>
+      <!-- 内部防伪细线 -->
+      <rect x="20" y="9" width="24" height="46" fill="none" stroke="#b9a05f" stroke-width="0.5" stroke-dasharray="2 1.4"/>
+      <!-- 上端银行名 -->
+      <rect x="22" y="11" width="20" height="7.5" rx="1" fill="#b23a2a"/>
+      <text x="32" y="16.8" font-size="6" font-weight="bold" fill="#f7e7b0" text-anchor="middle" font-family="serif">天地银行</text>
+      <!-- 四角面额数字 -->
+      <text x="23" y="15.4" font-size="3.2" font-weight="bold" fill="#6a4a1a" text-anchor="middle" font-family="serif">壹萬</text>
+      <text x="41" y="15.4" font-size="3.2" font-weight="bold" fill="#6a4a1a" text-anchor="middle" font-family="serif">壹萬</text>
+      <text x="23" y="53.5" font-size="3.2" font-weight="bold" fill="#6a4a1a" text-anchor="middle" font-family="serif">壹萬</text>
+      <text x="41" y="53.5" font-size="3.2" font-weight="bold" fill="#6a4a1a" text-anchor="middle" font-family="serif">壹萬</text>
+      <!-- 中央主图案：圆框聚宝盆+元宝 -->
+      <circle cx="32" cy="28.5" r="8" fill="#f7edd0" stroke="#a08040" stroke-width="0.9"/>
+      <path d="M26.5 31 Q26.5 26 29 24.5 Q32 26 35 24.5 Q37.5 26 37.5 31 Z" fill="#e3b94a" stroke="#8a6a1a" stroke-width="0.6"/>
+      <path d="M27.5 31 h9 l1 2 h-11 Z" fill="#c8902a" stroke="#8a6a1a" stroke-width="0.5"/>
+      <rect x="28.5" y="23.5" width="2.4" height="2" rx="1" fill="#8a6a1a" transform="rotate(20 30 24.5)"/>
+      <!-- 中央面额 -->
+      <text x="32" y="42.5" font-size="7" font-weight="bold" fill="#7a2418" text-anchor="middle" font-family="serif">壹萬</text>
+      <!-- 底部编号 -->
+      <text x="32" y="49.5" font-size="3" fill="#8a6a2a" text-anchor="middle" font-family="monospace">NO. 0044</text>
+      <!-- 底部门票暗纹 -->
+      <path d="M21 52 L43 52 M21 53.2 L43 53.2" stroke="#b9a05f" stroke-width="0.4"/>
+    </g>
+  </symbol>
+  <!-- 超市（纸扎商铺） -->
+  <symbol id="p-chaoshi" viewBox="0 0 64 64">
+    <g>
+      <rect x="12" y="24" width="40" height="32" rx="2" fill="#efe4c8" stroke="#5a3a1a" stroke-width="1.5"/>
+      <path d="M12 24 L14 16 L50 16 L52 24 Z" fill="#c9b088" stroke="#5a3a1a" stroke-width="1.5"/>
+      <rect x="26" y="31" width="12" height="13" fill="#f7f0df" stroke="#5a3a1a" stroke-width="1.2"/>
+      <rect x="18" y="33" width="6" height="5" fill="#f7f0df" stroke="#5a3a1a" stroke-width="0.9"/>
+      <rect x="40" y="33" width="6" height="5" fill="#f7f0df" stroke="#5a3a1a" stroke-width="0.9"/>
+      <path d="M17 50 L47 50" stroke="#5a3a1a" stroke-width="1.2"/>
+      <text x="32" y="21.5" font-size="7" fill="#5a3a1a" text-anchor="middle" font-family="serif">商铺</text>
+    </g>
+  </symbol>
+  <!-- 汽车（纸扎轿车） -->
+  <symbol id="p-qiche" viewBox="0 0 64 64">
+    <g>
+      <path d="M11 36 L16 28 Q18 25 22 25 L42 25 Q46 25 48 28 L53 36 L53 44 L11 44 Z" fill="#cfd8dc" stroke="#3a4a52" stroke-width="1.5"/>
+      <path d="M22 25 L26 17 L38 17 L42 25" fill="#e0e8ec" stroke="#3a4a52" stroke-width="1.2"/>
+      <path d="M27 25 L27 31 M37 25 L37 31 M30 22 L32 19 L34 22" stroke="#3a4a52" stroke-width="0.9"/>
+      <circle cx="20" cy="46" r="5" fill="#333" stroke="#1a1a1a" stroke-width="1.2"/>
+      <circle cx="44" cy="46" r="5" fill="#333" stroke="#1a1a1a" stroke-width="1.2"/>
+      <circle cx="20" cy="46" r="2.2" fill="#777"/>
+      <circle cx="44" cy="46" r="2.2" fill="#777"/>
+      <rect x="13" y="40" width="4" height="4" fill="#f3cd72" stroke="#8a5a1a" stroke-width="0.8"/>
+    </g>
+  </symbol>
+  <!-- 鲜花（纸扎白菊） -->
+  <symbol id="p-xianhua" viewBox="0 0 64 64">
+    <g>
+      <path d="M32 58 L32 36" stroke="#4a6a2a" stroke-width="2.2"/>
+      <g fill="#f7f2e6" stroke="#8a7a52" stroke-width="1.1">
+        <ellipse cx="23" cy="27" rx="5.5" ry="10" transform="rotate(-18 23 27)"/>
+        <ellipse cx="41" cy="27" rx="5.5" ry="10" transform="rotate(18 41 27)"/>
+        <ellipse cx="32" cy="25" rx="5.5" ry="11"/>
+      </g>
+      <circle cx="32" cy="25" r="3" fill="#d9b95c"/>
+      <path d="M28 44 Q26 48 24 52 M36 44 Q38 48 40 52" stroke="#4a6a2a" stroke-width="1.6" fill="none"/>
+      <path d="M30 56 Q34 54 36 56" stroke="#4a6a2a" stroke-width="1.2" fill="none"/>
+    </g>
+  </symbol>
+  <!-- 香烛 -->
+  <symbol id="p-xiangzhu" viewBox="0 0 64 64">
+    <g>
+      <rect x="26" y="14" width="12" height="46" rx="6" fill="#b03030" stroke="#7a1a18" stroke-width="1.4"/>
+      <rect x="27" y="14" width="4" height="46" rx="2" fill="#d95757"/>
+      <path d="M32 14 L32 7" stroke="#6a4a1a" stroke-width="1.4"/>
+      <circle cx="32" cy="6" r="2" fill="#f5d37a"/>
+      <rect x="14" y="30" width="4" height="28" rx="2" fill="#e6b04a" stroke="#8a5a1a" stroke-width="1"/>
+      <rect x="46" y="30" width="4" height="28" rx="2" fill="#e6b04a" stroke="#8a5a1a" stroke-width="1"/>
+      <path d="M13 30 L19 30 M45 30 L51 30" stroke="#c0392b" stroke-width="1.6"/>
+    </g>
+  </symbol>
+  <!-- 供果（果盘） -->
+  <symbol id="p-gongguo" viewBox="0 0 64 64">
+    <g>
+      <path d="M12 40 Q32 53 52 40 L52 46 Q32 58 12 46 Z" fill="#d9b98c" stroke="#5a3a1a" stroke-width="1.5"/>
+      <circle cx="22" cy="31" r="7.5" fill="#c0392b" stroke="#7a2418" stroke-width="1.2"/>
+      <circle cx="35" cy="27" r="6.5" fill="#e6b04a" stroke="#8a5a1a" stroke-width="1.2"/>
+      <circle cx="44" cy="34" r="6" fill="#6f9e52" stroke="#3a6a2a" stroke-width="1.2"/>
+      <path d="M20 24 Q20 21 22 19 M35 21 Q35 18 37 16 M44 28 Q46 26 47 24" stroke="#3a3a1a" stroke-width="1.1" fill="none"/>
+      <path d="M22 38 L22 42 M35 33 L35 37 M44 40 L44 44" stroke="#5a3a1a" stroke-width="1" stroke-linecap="round"/>
+    </g>
+  </symbol>
+  <!-- 寒衣包（包袱） -->
+  <symbol id="p-baofu" viewBox="0 0 64 64">
+    <g>
+      <path d="M18 18 Q18 12 32 12 Q46 12 46 18 L46 45 Q46 53 32 53 Q18 53 18 45 Z" fill="#d8cbaa" stroke="#5a3a1a" stroke-width="1.5"/>
+      <path d="M18 20 Q32 27 46 20 M18 27 Q32 34 46 27 M20 34 Q32 40 44 34" stroke="#5a3a1a" stroke-width="1" fill="none"/>
+      <path d="M30 12 Q30 7 32 5 Q34 7 34 12" stroke="#5a3a1a" stroke-width="1.4" fill="none"/>
+      <rect x="27" y="36" width="10" height="7" rx="1" fill="#c0392b" stroke="#7a2418" stroke-width="0.8"/>
+    </g>
+  </symbol>
+  <!-- 纸房舍（晋北） -->
+  <symbol id="p-fangshe" viewBox="0 0 64 64">
+    <g>
+      <rect x="14" y="26" width="36" height="28" rx="1.5" fill="#efe4c8" stroke="#5a3a1a" stroke-width="1.5"/>
+      <path d="M12 26 L32 14 L52 26 Z" fill="#b8c8a0" stroke="#5a3a1a" stroke-width="1.5"/>
+      <rect x="25" y="34" width="14" height="12" fill="#f7f0df" stroke="#5a3a1a" stroke-width="1.1"/>
+      <rect x="18" y="30" width="5" height="6" fill="#f7f0df" stroke="#5a3a1a" stroke-width="0.9"/>
+      <rect x="41" y="30" width="5" height="6" fill="#f7f0df" stroke="#5a3a1a" stroke-width="0.9"/>
+      <path d="M32 14 L32 9" stroke="#5a3a1a" stroke-width="1.2"/>
+    </g>
+  </symbol>
+  <!-- 馄饨（陕西） -->
+  <symbol id="p-huntun" viewBox="0 0 64 64">
+    <g>
+      <path d="M14 42 Q32 54 50 42 L50 47 Q32 59 14 47 Z" fill="#d9b98c" stroke="#5a3a1a" stroke-width="1.5"/>
+      <path d="M20 40 L24 36 L28 40 L24 44 Z" fill="#f0e6c8" stroke="#6a4a1a" stroke-width="1.1"/>
+      <path d="M32 38 L36 34 L40 38 L36 42 Z" fill="#f0e6c8" stroke="#6a4a1a" stroke-width="1.1"/>
+      <path d="M30 28 Q32 22 36 22 Q40 22 40 28" fill="#f3e8cc" stroke="#6a4a1a" stroke-width="1.2"/>
+      <path d="M30 28 L44 28" stroke="#6a4a1a" stroke-width="1.2"/>
+      <path d="M31 44 Q32 43 33 44 M36 42 Q37 41 38 42" stroke="#5a3a1a" stroke-width="0.9" fill="none"/>
+    </g>
+  </symbol>
+  <!-- 油炸粿（河南） -->
+  <symbol id="p-youzha" viewBox="0 0 64 64">
+    <g>
+      <path d="M20 24 L44 24 L40 50 L24 50 Z" fill="#e09a44" stroke="#8a5a1a" stroke-width="1.4"/>
+      <path d="M20 24 L26 18 L38 18 L44 24" fill="#c9842f" stroke="#8a5a1a" stroke-width="1.2"/>
+      <path d="M28 26 L30 36 M36 26 L34 36 M30 26 L28 26 M38 26 L36 26 M29 30 L35 30 M30 34 L34 34" stroke="#8a5a1a" stroke-width="0.9"/>
+    </g>
+  </symbol>
+  <!-- 冥票（甘肃/陕西手拓冥钞，天地银行样式） -->
+  <symbol id="p-mingpiao" viewBox="0 0 64 64">
+    <g>
+      <rect x="14" y="12" width="36" height="42" rx="2" fill="#dcc9a3" stroke="#5a3a1a" stroke-width="1.5"/>
+      <rect x="17" y="15" width="30" height="36" rx="1.5" fill="#eadfc4" stroke="#7a5a2a" stroke-width="1"/>
+      <rect x="19" y="19" width="26" height="12" rx="1" fill="#a83422" stroke="#6a1f14" stroke-width="0.8"/>
+      <path d="M22 22 L42 22 M22 25.5 L38 25.5 M22 29 L34 29" stroke="#e8c778" stroke-width="1" stroke-linecap="round"/>
+      <path d="M32 8 L30 6 M32 8 L34 6 M32 8 L32 6" stroke="#8a6a2a" stroke-width="1" fill="none"/>
+      <circle cx="32" cy="12" r="1.6" fill="#5a3a1a"/>
+      <path d="M22 38 Q32 42 42 38" fill="none" stroke="#7a5a2a" stroke-width="1"/>
+      <text x="32" y="46" font-size="6" fill="#5a3a1a" text-anchor="middle" font-family="serif">天地银行</text>
+      <path d="M20 50 L44 50" stroke="#7a5a2a" stroke-width="0.9"/>
+      <circle cx="22" cy="35" r="1.3" fill="#a83422" opacity="0.7"/>
+      <circle cx="42" cy="35" r="1.3" fill="#a83422" opacity="0.7"/>
+    </g>
+  </symbol>
+  <!-- 腊花纸五色冥衣（天津） -->
+  <symbol id="p-lahua" viewBox="0 0 64 64">
+    <g>
+      <path d="M18 10 L32 5 L46 10 L46 15 L42 17 L42 22 L22 22 L22 17 L18 15 Z" fill="#c9d6e2" stroke="#3a4a5a" stroke-width="1.4"/>
+      <path d="M32 5 L32 22" stroke="#3a4a5a" stroke-width="1"/>
+      <path d="M22 22 L32 44 L42 22 Z" fill="#e2c9d6" stroke="#3a4a5a" stroke-width="1.4"/>
+      <path d="M32 22 L32 44" stroke="#3a4a5a" stroke-width="1"/>
+      <path d="M26 16 L29 16 M35 16 L38 16" stroke="#c0392b" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M24 27 Q28 30 32 27 Q36 30 40 27" fill="none" stroke="#8a3a5a" stroke-width="0.9"/>
+      <circle cx="28" cy="33" r="1.1" fill="#c9a24a"/><circle cx="36" cy="33" r="1.1" fill="#5a7a3a"/>
+      <circle cx="30" cy="38" r="1" fill="#a83422"/><circle cx="34" cy="38" r="1" fill="#3a5a8a"/>
+    </g>
+  </symbol>
+  <!-- 夹棉寒衣（晋南/长武纸棉衣） -->
+  <symbol id="p-mianyi" viewBox="0 0 64 64">
+    <g>
+      <path d="M20 12 L32 7 L44 12 L44 17 L41 19 L41 24 L23 24 L23 19 L20 17 Z" fill="#d8b98a" stroke="#5a3a1a" stroke-width="1.4"/>
+      <path d="M32 7 L32 24" stroke="#5a3a1a" stroke-width="1"/>
+      <path d="M23 24 L32 46 L41 24 Z" fill="#e3cba0" stroke="#5a3a1a" stroke-width="1.4"/>
+      <path d="M32 24 L32 46" stroke="#5a3a1a" stroke-width="1"/>
+      <path d="M26 15 L29 15 M35 15 L38 15" stroke="#7a4a1a" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M27 19 L30 19 M34 19 L37 19" stroke="#7a4a1a" stroke-width="0.8"/>
+      <path d="M27 30 L32 34 L37 30" fill="none" stroke="#7a5a2a" stroke-width="0.9"/>
+      <path d="M30 33 L32 33 L32 38" stroke="#7a5a2a" stroke-width="0.8" fill="none"/>
+      <path d="M26 28 Q27 25 30 25 M38 28 Q37 25 34 25" fill="none" stroke="#7a5a2a" stroke-width="0.8"/>
+    </g>
+  </symbol>
+  <!-- 糍粑（客家/川渝/闽北十月朝节物） -->
+  <symbol id="p-ciba" viewBox="0 0 64 64">
+    <g>
+      <path d="M14 34 Q14 24 22 24 L42 24 Q50 24 50 34 L50 38 Q50 46 42 46 L22 46 Q14 46 14 38 Z" fill="#ece0c4" stroke="#6a4a1a" stroke-width="1.4"/>
+      <path d="M20 30 Q32 34 44 30" fill="none" stroke="#8a6a2a" stroke-width="0.9"/>
+      <path d="M18 36 Q32 40 46 36" fill="none" stroke="#8a6a2a" stroke-width="0.9"/>
+      <path d="M21 42 Q32 45 43 42" fill="none" stroke="#8a6a2a" stroke-width="0.9"/>
+      <circle cx="26" cy="27" r="1.2" fill="#c9a24a"/><circle cx="38" cy="27" r="1.2" fill="#c9a24a"/>
+      <path d="M24 44 L20 52 M32 46 L32 53 M40 44 L44 52" stroke="#6a4a1a" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M24 51 L16 51 M40 51 L48 51" stroke="#8a6a2a" stroke-width="1.1"/>
+    </g>
+  </symbol>
+  <!-- 炉节饼（上海十月朔开炉饼） -->
+  <symbol id="p-lubing" viewBox="0 0 64 64">
+    <g>
+      <path d="M18 22 Q18 14 32 14 Q46 14 46 22 L46 36 Q46 44 32 44 Q18 44 18 36 Z" fill="#d99a4e" stroke="#7a4a1a" stroke-width="1.5"/>
+      <path d="M18 22 Q32 27 46 22" fill="none" stroke="#8a5a1a" stroke-width="0.9"/>
+      <path d="M19 28 Q32 33 45 28" fill="none" stroke="#8a5a1a" stroke-width="0.9"/>
+      <circle cx="26" cy="20" r="1.2" fill="#f3cd72"/><circle cx="38" cy="20" r="1.2" fill="#f3cd72"/>
+      <circle cx="32" cy="17" r="1" fill="#f3cd72"/>
+      <path d="M14 20 L20 12 L24 14" fill="none" stroke="#6a4a1a" stroke-width="1.3"/>
+      <path d="M10 20 L18 20" stroke="#8a5a1a" stroke-width="1.2"/>
+    </g>
+  </symbol>
+  <!-- 红豆糯米饭（南京/镇江十月朝尝新） -->
+  <symbol id="p-hongdou" viewBox="0 0 64 64">
+    <g>
+      <path d="M16 26 L48 26 L44 50 L20 50 Z" fill="#f0e8d4" stroke="#6a4a1a" stroke-width="1.4"/>
+      <path d="M16 26 L32 18 L48 26" fill="#dcc9a3" stroke="#6a4a1a" stroke-width="1.2"/>
+      <path d="M20 31 Q32 34 44 31 M20 36 Q32 39 44 36 M20 41 Q32 44 44 41" fill="none" stroke="#c0a878" stroke-width="0.8"/>
+      <circle cx="25" cy="30" r="1.3" fill="#a83422"/><circle cx="33" cy="33" r="1.3" fill="#a83422"/>
+      <circle cx="40" cy="31" r="1.3" fill="#a83422"/><circle cx="29" cy="38" r="1.3" fill="#a83422"/>
+      <circle cx="36" cy="41" r="1.3" fill="#a83422"/><circle cx="24" cy="45" r="1.3" fill="#a83422"/>
+    </g>
+  </symbol>
+  <!-- 秋柿（河北定兴寒衣祭果） -->
+  <symbol id="p-shizi" viewBox="0 0 64 64">
+    <g>
+      <path d="M20 30 Q20 16 32 16 Q44 16 44 30 L44 34 Q44 46 32 46 Q20 46 20 34 Z" fill="#d9772b" stroke="#7a3a12" stroke-width="1.5"/>
+      <path d="M20 30 Q32 36 44 30 M20 36 Q32 42 44 36" fill="none" stroke="#c05f18" stroke-width="0.9"/>
+      <path d="M32 16 Q32 10 30 8 M32 16 Q32 10 34 8" fill="none" stroke="#6a3a1a" stroke-width="1.2"/>
+      <ellipse cx="32" cy="7" rx="2.4" ry="1.6" fill="#7a5a2a" stroke="#5a3a1a" stroke-width="0.7"/>
+      <circle cx="24" cy="24" r="1.1" fill="#f3cd72"/><circle cx="40" cy="24" r="1.1" fill="#f3cd72"/>
+    </g>
+  </symbol>
+  <!-- 纸房子（通用大宅院） -->
+  <symbol id="p-house" viewBox="0 0 64 64">
+    <g>
+      <rect x="10" y="26" width="44" height="28" rx="1.5" fill="#efe4c8" stroke="#5a3a1a" stroke-width="1.5"/>
+      <path d="M7 26 L32 12 L57 26 Z" fill="#b8c8a0" stroke="#5a3a1a" stroke-width="1.5"/>
+      <path d="M23 28 L23 18 L41 18 L41 28" fill="#dcc9a3" stroke="#5a3a1a" stroke-width="1.2"/>
+      <rect x="26" y="34" width="12" height="12" fill="#f7f0df" stroke="#5a3a1a" stroke-width="1.1"/>
+      <rect x="14" y="32" width="5" height="6" fill="#f7f0df" stroke="#5a3a1a" stroke-width="0.9"/>
+      <rect x="45" y="32" width="5" height="6" fill="#f7f0df" stroke="#5a3a1a" stroke-width="0.9"/>
+      <path d="M22 20 L42 20" stroke="#5a3a1a" stroke-width="0.9"/>
+      <path d="M16 46 L48 46" stroke="#5a3a1a" stroke-width="1.2"/>
+      <path d="M32 12 L32 7" stroke="#5a3a1a" stroke-width="1.2"/>
+    </g>
+  </symbol>
+  <!-- 纸仆人（金童玉女一对） -->
+  <symbol id="p-puren" viewBox="0 0 64 64">
+    <g>
+      <circle cx="22" cy="14" r="5" fill="#f0e6d0" stroke="#5a3a1a" stroke-width="1.2"/>
+      <path d="M18 20 Q22 24 26 20 L27 42 L17 42 Z" fill="#d8cbaa" stroke="#5a3a1a" stroke-width="1.3"/>
+      <path d="M18 26 L22 34 L17 34 Z" fill="#f0e6d0" stroke="#5a3a1a" stroke-width="0.9"/>
+      <circle cx="42" cy="14" r="5" fill="#f0e6d0" stroke="#5a3a1a" stroke-width="1.2"/>
+      <path d="M38 20 Q42 24 46 26 L47 42 L37 42 Z" fill="#dcc9a3" stroke="#5a3a1a" stroke-width="1.3"/>
+      <path d="M38 26 L42 34 L37 34 Z" fill="#f0e6d0" stroke="#5a3a1a" stroke-width="0.9"/>
+      <path d="M16 42 Q32 50 48 42" fill="none" stroke="#5a3a1a" stroke-width="1.4"/>
+      <path d="M22 9 Q20 6 21 5 M42 9 Q40 6 41 5" stroke="#5a3a1a" stroke-width="0.9" fill="none"/>
+      <path d="M21 12 L23 12 M41 12 L43 12" stroke="#c0392b" stroke-width="1" stroke-linecap="round"/>
+    </g>
+  </symbol>
+  <!-- 纸城堡（彩色塔楼） -->
+  <symbol id="p-chengbao" viewBox="0 0 64 64">
+    <g>
+      <rect x="8" y="30" width="48" height="24" rx="1.5" fill="#e2d4b4" stroke="#5a3a1a" stroke-width="1.5"/>
+      <path d="M14 30 L14 20 L18 20 L18 30 M24 30 L24 18 L28 18 L28 30 M36 30 L36 18 L40 18 L40 30 M46 30 L46 20 L50 20 L50 30" fill="#efe4c8" stroke="#5a3a1a" stroke-width="1.3"/>
+      <rect x="25" y="38" width="14" height="10" fill="#f7f0df" stroke="#5a3a1a" stroke-width="1.1"/>
+      <path d="M11 30 L11 26 L13 26 L13 30" stroke="#5a3a1a" stroke-width="1"/>
+      <path d="M16 52 L48 52" stroke="#5a3a1a" stroke-width="1.2"/>
+      <circle cx="32" cy="43" r="1.4" fill="#5a3a1a"/>
+      <path d="M14 20 L14 17 M46 20 L46 17 M28 18 L28 15 M36 18 L36 15" stroke="#c0392b" stroke-width="1.2"/>
+    </g>
+  </symbol>
+  <!-- 纸钱串（圆孔串钱） -->
+  <symbol id="p-qianchuan" viewBox="0 0 64 64">
+    <g>
+      <path d="M32 6 L32 54" stroke="#7a5a2a" stroke-width="1.6" stroke-dasharray="1 5" stroke-linecap="round"/>
+      <g fill="#d9b95c" stroke="#8a5a1a" stroke-width="1.2">
+        <circle cx="32" cy="14" r="6"/><circle cx="32" cy="28" r="6"/>
+        <circle cx="32" cy="42" r="6"/><circle cx="32" cy="8" r="5"/>
+        <circle cx="32" cy="20" r="5"/><circle cx="32" cy="34" r="5"/>
+      </g>
+      <g fill="#8a5a1a">
+        <circle cx="32" cy="14" r="1.8"/><circle cx="32" cy="28" r="1.8"/>
+        <circle cx="32" cy="42" r="1.8"/><circle cx="32" cy="8" r="1.6"/>
+        <circle cx="32" cy="20" r="1.6"/><circle cx="32" cy="34" r="1.6"/>
+      </g>
+      <path d="M26 54 L38 54" stroke="#8a5a1a" stroke-width="1.4"/>
+    </g>
+  </symbol>
+  <!-- 纸衣（单件上衣，通用） -->
+  <symbol id="p-yi" viewBox="0 0 64 64">
+    <g>
+      <path d="M16 12 L32 6 L48 12 L48 18 L44 20 L44 26 L20 26 L20 20 L16 18 Z" fill="#e2c9d6" stroke="#5a3a1a" stroke-width="1.4"/>
+      <path d="M32 6 L32 26" stroke="#5a3a1a" stroke-width="1"/>
+      <path d="M20 26 L32 50 L44 26 Z" fill="#efe0e8" stroke="#5a3a1a" stroke-width="1.4"/>
+      <path d="M32 26 L32 50" stroke="#5a3a1a" stroke-width="1"/>
+      <path d="M27 16 L30 16 M34 16 L37 16" stroke="#8a3a5a" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M23 32 L28 32 M36 32 L41 32 M24 38 L29 38 M35 38 L40 38" stroke="#5a3a1a" stroke-width="0.9"/>
+    </g>
+  </symbol>
+  <!-- 地区图标（实体彩色插画：有填充、体积与光影，不再是线条阴影） -->
+  <!-- 寒衣包袱（京津、华北送寒衣） -->
+  <symbol id="i-bag" viewBox="0 0 24 24"><g>
+    <rect x="4" y="8" width="16" height="11" rx="2.5" fill="#c98f52" stroke="#7a4a1a" stroke-width="1.3"/>
+    <path d="M12 8c-2.2-1.6-4-3.4-4.6-5.4 3.1.9 4.6 3 4.6 5.4 0-2.4 1.5-4.5 4.6-5.4-.6 2-2.4 3.8-4.6 5.4z" fill="#7a4a1a"/>
+    <path d="M4 8h16v2H4z" fill="#e8c98a"/>
+    <rect x="9.5" y="12" width="5" height="3" rx="1" fill="#f0d9a8" stroke="#7a4a1a" stroke-width="0.7"/>
+    <path d="M4 9c0 4 2 5.5 4 8M20 9c0 4-2 5.5-4 8" stroke="#7a4a1a" stroke-width="1" fill="none"/>
+    <path d="M12 8v2" stroke="#f3e2bd" stroke-width="0.8"/>
+  </g></symbol>
+  <!-- 火焰（点火焚纸、中原华北祭祀） -->
+  <symbol id="i-fire" viewBox="0 0 24 24"><g>
+    <path d="M12 3c1.8 2.7 4 4.6 4 7.6A4 4 0 0 1 12 15a4 4 0 0 1-4-4.4c0-3 2.2-4.9 4-7.6z" fill="#f5a623"/>
+    <path d="M12 3c.6.9 1.1 1.7 1.5 2.5-.9 1-2.5 2-2.5 4.5 0 1.8 1.6 2.6 2.7 2-.4 1-1.4 1.6-2.5 1.5A4 4 0 0 1 8 10.6C8 7.5 10.4 5.4 12 3z" fill="#ffd87a"/>
+    <path d="M12 15v6" stroke="#8a3a1a" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M10.5 18h3" stroke="#c05a20" stroke-width="1.2" stroke-linecap="round"/>
+  </g></symbol>
+  <!-- 谷穗/秋收（齐鲁、苏南供秋收成果） -->
+  <symbol id="i-grain" viewBox="0 0 24 24"><g>
+    <path d="M12 21V8" stroke="#8a6a2a" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M12 9c-2.4-.6-3.9-2.4-4-5.4 2.7.4 4 2.6 4 5.4z" fill="#d9b95c" stroke="#a08020" stroke-width="0.7"/>
+    <path d="M12 12c-2.4-.6-3.9-2.4-4-5.4 2.7.4 4 2.6 4 5.4z" fill="#e6cc77" stroke="#a08020" stroke-width="0.7"/>
+    <path d="M12 15c-2.4-.6-3.9-2.4-4-5.4 2.7.4 4 2.6 4 5.4z" fill="#f0daa0" stroke="#a08020" stroke-width="0.7"/>
+    <path d="M12 18c-2.4-.6-3.9-2.4-4-5.4 2.7.4 4 2.6 4 5.4z" fill="#f7e8bf" stroke="#a08020" stroke-width="0.7"/>
+    <path d="M12 21c-2.4-.6-3.9-2.4-4-5.4 2.7.4 4 2.6 4 5.4z" fill="#d9b95c" stroke="#a08020" stroke-width="0.7"/>
+  </g></symbol>
+  <!-- 供碗（馄饨/扁食/糍粑，关中中原江南） -->
+  <symbol id="i-bowl" viewBox="0 0 24 24"><g>
+    <path d="M5 13c0-1.7 1.5-3 3-3h8c1.5 0 3 1.3 3 3 0 3.4-2.7 6-6 6H11c-3.3 0-6-2.6-6-6z" fill="#c98f52" stroke="#7a4a1a" stroke-width="1.2"/>
+    <path d="M5 11c0-1.7 1.5-3 3-3h8c1.5 0 3 1.3 3 3" fill="#e8c98a"/>
+    <path d="M12 20.5v1.5" stroke="#7a4a1a" stroke-width="1.3" stroke-linecap="round"/>
+    <ellipse cx="12" cy="13.2" rx="5" ry="2.2" fill="#f7e8bf" stroke="#a08020" stroke-width="0.6"/>
+    <path d="M9.5 13.2c0-.7 2.2-1.2 5-1.2M9.7 14.2c.8-.4 2.3-.6 3.8-.6" stroke="#a08020" stroke-width="0.6" fill="none"/>
+  </g></symbol>
+  <!-- 桥（客家/南方祭祀踏桥） -->
+  <symbol id="i-bridge" viewBox="0 0 24 24"><g>
+    <path d="M4 15.5c0-2.2 1.8-4 4-4h8c2.2 0 4 1.8 4 4z" fill="#a08a5a" stroke="#6a5432" stroke-width="1.1"/>
+    <path d="M4 15.5h16" stroke="#6a5432" stroke-width="1.4"/>
+    <path d="M12 11.5V8.5" stroke="#6a5432" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M9 8.5h6" stroke="#6a5432" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M5.5 19h13" stroke="#6a5432" stroke-width="0.9" stroke-linecap="round"/>
+  </g></symbol>
+  <!-- 房舍（晋西北纸房舍、送屋） -->
+  <symbol id="i-house" viewBox="0 0 24 24"><g>
+    <path d="M5 10L12 4.5 19 10z" fill="#8a6a3a" stroke="#5a4020" stroke-width="1.1"/>
+    <rect x="6" y="10.5" width="12" height="9" rx="1" fill="#c9a86a" stroke="#5a4020" stroke-width="1.1"/>
+    <rect x="10" y="13.5" width="4" height="6" fill="#7a5430" stroke="#5a4020" stroke-width="0.9"/>
+    <path d="M9 11.5h6" stroke="#e8d9a8" stroke-width="0.8"/>
+    <rect x="7" y="11" width="2.5" height="2.5" fill="#e8d9a8" stroke="#5a4020" stroke-width="0.7"/>
+    <rect x="14.5" y="11" width="2.5" height="2.5" fill="#e8d9a8" stroke="#5a4020" stroke-width="0.7"/>
+  </g></symbol>
+  <!-- 地图/疆域（青海、新疆、无此俗） -->
+  <symbol id="i-map" viewBox="0 0 24 24"><g>
+    <path d="M4 7l5-2.5 6 2.5 5-2v12l-5 2-6-2.5L4 19z" fill="#a08a5a" stroke="#6a5432" stroke-width="1.1"/>
+    <path d="M9 4.5v15M15 7v12" stroke="#6a5432" stroke-width="1"/>
+    <path d="M7.5 8.5h3M13 11h3M7.5 13h3M13 15.5h3" stroke="#d8c98a" stroke-width="0.8"/>
+  </g></symbol>
+  <!-- 雪花（塞北、东北、高寒地区） -->
+  <symbol id="i-snow" viewBox="0 0 24 24"><g>
+    <g stroke="#9fc6e8" stroke-width="1.4" stroke-linecap="round">
+      <path d="M12 4v16M4 12h16M7.5 7.5l9 9M16.5 7.5l-9 9"/>
+    </g>
+    <circle cx="12" cy="12" r="2.2" fill="#d8ecfa"/>
+    <circle cx="12" cy="12" r="0.8" fill="#9fc6e8"/>
+  </g></symbol>
+  <!-- 香烛（西南、川渝供香） -->
+  <symbol id="i-candle" viewBox="0 0 24 24"><g>
+    <rect x="9.5" y="10" width="5" height="11" rx="1" fill="#c98f52" stroke="#7a4a1a" stroke-width="1.1"/>
+    <rect x="9.5" y="10" width="5" height="4" rx="1" fill="#e8c98a"/>
+    <path d="M12 10c0-1.5 2-1.5 2-3 1.2 1 2 1.8 2 3h-4z" fill="#f5a623"/>
+    <path d="M4 21h16" stroke="#7a4a1a" stroke-width="1" stroke-linecap="round"/>
+  </g></symbol>
+</svg>
+
+<script>
+'use strict';
+/* ================= 数据 ================= */
+/* 通用供品 */
+const OFFERINGS = [
+  {id:'hanyi',   name:'寒衣',   unit:'件', fig:'#p-hanyi',   uniq:false},
+  {id:'yi',      name:'纸衣',   unit:'件', fig:'#p-yi',      uniq:false},
+  {id:'yuanbao', name:'纸元宝', unit:'锭', fig:'#p-yuanbao', uniq:false},
+  {id:'zhiqian', name:'纸钱',   unit:'沓', fig:'#p-zhiqian', uniq:false},
+  {id:'qianchuan',name:'纸钱串',unit:'串', fig:'#p-qianchuan',uniq:false},
+  {id:'fangzi',  name:'纸房子', unit:'座', fig:'#p-house',   uniq:false},
+  {id:'chengbao',name:'纸城堡', unit:'座', fig:'#p-chengbao',uniq:false},
+  {id:'puren',   name:'纸仆人', unit:'对', fig:'#p-puren',   uniq:false},
+  {id:'chaoshi', name:'纸超市', unit:'座', fig:'#p-chaoshi', uniq:false},
+  {id:'qiche',   name:'纸汽车', unit:'辆', fig:'#p-qiche',   uniq:false},
+  {id:'xianhua', name:'纸鲜花', unit:'束', fig:'#p-xianhua', uniq:false},
+  {id:'xiangzhu',name:'香烛',   unit:'对', fig:'#p-xiangzhu',uniq:false},
+  {id:'gongguo', name:'供果',   unit:'份', fig:'#p-gongguo', uniq:false}
+];
+/* 各地区特色纸品（只在本地区出现） */
+const REGION_SPECIALS = {
+  'bj': {id:'baofu',  name:'寒衣包',   unit:'个', fig:'#p-baofu'},
+  'tj': {id:'lahua',  name:'腊花纸冥衣', unit:'件', fig:'#p-lahua'},
+  'hb': {id:'shizi',  name:'秋柿',     unit:'枚', fig:'#p-shizi'},
+  'jn': {id:'fangshe',name:'纸房舍',   unit:'座', fig:'#p-fangshe'},
+  'js': {id:'mianyi', name:'夹棉寒衣', unit:'件', fig:'#p-mianyi'},
+  'sx': {id:'huntun', name:'馄饨',     unit:'碗', fig:'#p-huntun'},
+  'gs': {id:'mingpiao',name:'冥票',    unit:'沓', fig:'#p-mingpiao'},
+  'hn': {id:'youzha', name:'油炸粿',   unit:'碟', fig:'#p-youzha'},
+  'sh': {id:'lubing', name:'炉节饼',   unit:'碟', fig:'#p-lubing'},
+  'jsu':{id:'hongdou',name:'红豆糯米饭', unit:'碗', fig:'#p-hongdou'},
+  'gd': {id:'ciba',   name:'糍粑',     unit:'盘', fig:'#p-ciba'},
+  'gx': {id:'ciba2',  name:'糍粑',     unit:'盘', fig:'#p-ciba'},
+  'fj': {id:'ciba3',  name:'豆米糍',   unit:'盘', fig:'#p-ciba'},
+  'sc': {id:'ciba4',  name:'糍粑',     unit:'盘', fig:'#p-ciba'},
+  'cq': {id:'ciba5',  name:'糍粑',     unit:'盘', fig:'#p-ciba'}
+};
+/* 各地祭祀方式（全国代表，考据来源见风俗页） */
+const REGIONS = [
+  {id:'gn', name:'通用',   tag:'各地常见之礼',        icon:'#i-fire',  grp:'通用',
+   way:'烧寒衣、纸钱，点香烛，把心意一并焚化。'},
+  {id:'bj', name:'北京',   tag:'糊包袱 · 打发外祟',   icon:'#i-bag',   grp:'华北',
+   way:'糊好写名的寒衣包（内装五色纸衣与金银锭），捧至门外十字路口，先烧几张白纸"打发外祟"，再正式焚化。'},
+  {id:'tj', name:'天津',   tag:'腊花纸五色冥衣',      icon:'#i-bag',   grp:'华北',
+   way:'用腊花纸剪五色冥衣与纸帛，白天或傍晚在祖考前祭奠后焚化。'},
+  {id:'hb', name:'河北',   tag:'拜墓焚衣 · 以柿为祭', icon:'#i-fire',  grp:'华北',
+   way:'拜扫祖墓，焚五色纸衣，以柿子等秋果作祭；邯郸一带讲究午后至傍晚再烧（"早清明，晚寒日"）。'},
+  {id:'jn', name:'山西晋北', tag:'五色纸衣帽鞋被+纸房舍', icon:'#i-fire', grp:'华北',
+   way:'用五色纸做成衣、帽、鞋、被，连同瓦柱门窗俱全的纸房舍一并焚化；傍晚路祭，另烧散纸赈孤魂。'},
+  {id:'js', name:'山西晋南', tag:'五色纸夹棉花',      icon:'#i-bag',   grp:'华北',
+   way:'在五色纸裁制的寒衣里夹裹棉花，折成棉衣棉被，扛至祖坟前焚烧，愿逝者穿着暖和。'},
+  {id:'jz', name:'山西晋中', tag:'平遥凌晨烧 · 太原环保袋', icon:'#i-fire', grp:'华北',
+   way:'平遥、临县凌晨在门外或坟前烧寒衣；太原市民到社区环保焚烧袋集中点焚烧。'},
+  {id:'nm', name:'内蒙古', tag:'塞北 · 文明祭祀点',    icon:'#i-snow', grp:'东北',
+   way:'傍晚在政府划定文明祭祀点（黄色焚烧桶旁）烧五色纸衣、纸钱。此俗由走西口汉族移民带入。'},
+  {id:'ln', name:'辽宁',   tag:'十字路口画圈',        icon:'#i-fire',  grp:'东北',
+   way:'傍晚至夜，在城区十字路口地上画圈（留朝家乡方向的缺口），圈内烧五色纸衣、纸钱、包袱。'},
+  {id:'jl', name:'吉林',   tag:'文明祭祀桶点位',      icon:'#i-fire',  grp:'东北',
+   way:'傍晚到夜，到社区文明祭祀桶点位或十字路口画圈烧五色纸衣、纸钱。'},
+  {id:'hlj',name:'黑龙江', tag:'写包裹单 · 先钱后衣', icon:'#i-snow',  grp:'东北',
+   way:'傍晚在十字路口画圈、写"包裹单"标先人名号，先烧纸钱后烧五色纸寒衣与纸扎供品。'},
+  {id:'sx', name:'陕西',   tag:'关中 · 鸡鸣献馄饨',   icon:'#i-bowl',  grp:'西北',
+   way:'鸡鸣时焚纸，并献馄饨祭先，谓之迎寒衣；长武一带纸折棉衣夹棉絮，画圈焚烧防孤魂抢占。'},
+  {id:'gs', name:'甘肃',   tag:'门外招魂 · 纸棉鞋帽', icon:'#i-bowl',  grp:'西北',
+   way:'用纸和棉花剪贴成棉衣、鞋、帽，赴坟茔或郊外焚烧；客死异乡者封包写明地址送城隍庙"焚包"转交。'},
+  {id:'nx', name:'宁夏',   tag:'祠堂设祭 · 馄饨冬祭', icon:'#i-bridge',grp:'西北',
+   way:'大族祠堂焚五色纸衣，庶民作馄饨奠之，为冬祭；当代汉族多在十字路口集中烧纸。'},
+  {id:'qh', name:'青海',   tag:'河湟 · 临时祭祀场点', icon:'#i-snow',  grp:'西北',
+   way:'赴政府指定临时祭祀场点焚纸钱寒衣（西宁开放 9:00—23:00 便民祭祀点）。'},
+  {id:'xj', name:'新疆',   tag:'公墓上坟 · 民政倡鲜花', icon:'#i-map',  grp:'西北',
+   way:'公墓墓区上坟烧纸送寒衣；新疆禁止生产经营纸钱纸扎，民政倡导鲜花与网络祭扫。'},
+  {id:'hn', name:'河南',   tag:'中原 · 十月一油唧唧', icon:'#i-bowl',  grp:'华中',
+   way:'晚饭后端上托盘，放上用五色纸做成的寒衣，送到路口或坟前焚烧祭奠；豫东讲究柳枝画半圈防孤魂抢。'},
+  {id:'hub',name:'湖北',   tag:'鄂西 · 烧包袱送寒衣', icon:'#i-house', grp:'华中',
+   way:'上坟圆坟修墓，用白黄红彩纸剪成棉袄裤帽鞋，包好后正面写祖先名字与"魂下受用"、背面写"封"字焚化。'},
+  {id:'sd', name:'山东',   tag:'齐鲁 · 供秋收',       icon:'#i-grain', grp:'华东',
+   way:'上坟时将秋收新粮供于坟前，以彩纸剪成衣裤鞋帽连同包袱纸钱在圈内焚化，边烧边呼亡者名讳。'},
+  {id:'jsu',name:'江苏',   tag:'江南 · 红豆饭尝新',   icon:'#i-bowl',  grp:'华东',
+   way:'南京傍晚门前供红豆糯米饭，把写祖先名讳的红纸袋（内装纸糊衣裤鞋帽）堂前祭奠后拎至门外焚化。'},
+  {id:'ah', name:'安徽',   tag:'皖北 · 冥阴节哭节',   icon:'#i-bridge',grp:'华东',
+   way:'傍晚到祖坟前摆供焚香，把彩纸糊衣帽鞋连同纸钱包袱在墓前焚化，添新土叩首；路远者门外奠而焚之。'},
+  {id:'zj', name:'浙江',   tag:'两浙 · 出郊扫松',     icon:'#i-map',   grp:'华东',
+   way:'朔日先在家奠祭，再携绵球楮衣（纸糊衣帽）、纸钱出郊上祖坟扫松拜墓；另剪纸衣施舍孤鬼。'},
+  {id:'sh', name:'上海',   tag:'沪上 · 开炉祭先（非焚衣）', icon:'#i-bowl', grp:'华东',
+   way:'十月朔在家祠前开炉煮饼，新饼献祖先，午后看报赛丰年的赛社。上海旧俗是开炉祭先，不是烧纸衣。'},
+  {id:'sc', name:'四川',   tag:'巴蜀 · 灰圈焚衣犒土地', icon:'#i-candle', grp:'西南',
+   way:'入夜在宅外灰画留口圆圈，圈内焚纸衣纸钱、圈外烧少量纸犒赏五方土地，举三炷香送寒衣。'},
+  {id:'cq', name:'重庆',   tag:'巴渝 · 剪纸男女衣',   icon:'#i-candle',  grp:'西南',
+   way:'剪男装黑/棕色、女装带花点的纸衣，连同纸钱入夜在村头或宅外净地焚化送先。'},
+  {id:'gd', name:'广东客家', tag:'十月朝 · 打糍粑',  icon:'#i-bridge',grp:'华南',
+   way:'十月朝打糯米糍粑、做苎叶粄，先祭田祖与耕牛，再全家围食、馈送亲友。客家核心是做糍粑庆丰收，不是焚纸衣。'},
+  {id:'gx', name:'广西客家', tag:'祭祖坟 · 今已淡化', icon:'#i-bridge',grp:'华南',
+   way:'十月朝先祭扫祖坟、焚纸衣纸钱送寒衣（旧俗，今已淡化），现多转为打糍粑、全家团聚。'},
+  {id:'fj', name:'福建闽北', tag:'十月朝 · 做糍告冬', icon:'#i-grain', grp:'华南',
+   way:'十月朔打豆米糍、包京饨供祖"告冬"，再糍粑馈送亲友；闽地未苦寒，不主打焚衣。'}
+];
+const NAME_CHIPS = ['爷爷','奶奶','父亲','母亲','外公','外婆','先人','故友'];
+const MSG_PRESETS = [
+  '天冷了，记得添衣，我们都很想念您。',
+  '愿您在那边一切安好，无忧无虑。',
+  '我们一切都好，请勿挂念。',
+  '深深思念，愿春晖永沐。'
+];
+const LANTERN_PRESETS = [
+  '愿您在天堂安好，勿念。',
+  '愿灯火照亮您回家的路。',
+  '愿所念之人，冬暖衣丰。',
+  '愿一切顺遂，平安喜乐。'
+];
+const STATE = { step:0, name:'', region:'gn', qty:{}, lanternMsg:'', moneyDenom:'拾万圆' };
+OFFERINGS.forEach(o=>STATE.qty[o.id]=0);
+/* 冥币面额选项 */
+const MONEY_DENOMS = ['壹万圆','拾万圆','佰万圆','壹仟万圆'];
+function allOfferings(){
+  const sp=REGION_SPECIALS[STATE.region];
+  if(!sp)return OFFERINGS;
+  if(!STATE.qty[sp.id])STATE.qty[sp.id]=0;
+  return OFFERINGS.concat([{id:sp.id,name:sp.name,unit:sp.unit,fig:sp.fig,uniq:true}]);
+}
+const VIEWS = ['view-home','view-object','view-region','view-offering','view-burn','view-message','view-receipt','view-customs','view-lantern'];
+const STEP_MAP = {1:1,2:2,3:3,4:4,5:5};
+
+/* ================= 通用 ================= */
+const $ = s=>document.querySelector(s);
+const byId = id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function pico(fig,cls){return '<svg class="pico '+cls+'" viewBox="0 0 64 64"><use href="'+fig+'" xlink:href="'+fig+'"/></svg>';}
+function icoUse(id,cls){return '<svg class="pico '+cls+'" viewBox="0 0 24 24"><use href="'+id+'" xlink:href="'+id+'"/></svg>';}
+// 地区文字徽标：按省份/地区标准简称显示（北京→京、辽宁→辽、甘肃→甘、山西→晋…）
+function mark(name,px){
+  const n=String(name);
+  const map=[
+    ['通用','通'],['北京','京'],['天津','津'],['河北','冀'],['山西','晋'],['内蒙古','蒙'],
+    ['辽宁','辽'],['吉林','吉'],['黑龙江','黑'],['陕西','陕'],['甘肃','甘'],['宁夏','宁'],
+    ['青海','青'],['新疆','新'],['河南','豫'],['湖北','鄂'],['山东','鲁'],['江苏','苏'],
+    ['安徽','皖'],['浙江','浙'],['上海','沪'],['四川','川'],['重庆','渝'],['广东','粤'],
+    ['广西','桂'],['福建','闽'],['云南','滇'],['贵州','黔'],['海南','琼'],['湖南','湘'],['江西','赣']
+  ];
+  let s='地';
+  for(const [k,v] of map){ if(n.indexOf(k)>-1){ s=v; break; } }
+  return '<span class="mark" style="width:'+(px||36)+'px;height:'+(px||36)+'px;font-size:'+Math.round((px||36)*0.42)+'px">'+s+'</span>';
+}
+function toast(msg){const t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:rgba(24,18,12,.94);color:var(--gold-2);border:1px solid var(--line);padding:10px 22px;border-radius:999px;font-size:14px;z-index:99;letter-spacing:.05em';document.body.appendChild(t);setTimeout(()=>t.remove(),1600);}
+
+function go(idx){
+  if(idx<0||idx>=VIEWS.length)return;
+  if(STATE.step===4)cancelBurn();           // 离开焚化页时停掉动画
+  document.querySelector('.view.active')?.classList.remove('active');
+  byId(VIEWS[idx]).classList.add('active');
+  STATE.step=idx;
+  const steps=$('#steps');
+  if(idx===0||idx>=7){steps.classList.remove('on');}
+  else{
+    steps.classList.add('on');
+    document.querySelectorAll('.step').forEach(s=>{
+      const n=+s.dataset.step;
+      s.classList.toggle('done',n<STEP_MAP[idx]);
+      s.classList.toggle('cur',n===STEP_MAP[idx]);
+    });
+  }
+  if(idx===1)byId('name-input').focus();
+  if(idx===2)renderRegions();
+  if(idx===3)renderOffer();
+  if(idx===4)startBurn();
+  if(idx===6)renderReceipt();
+  if(idx===7)renderCustoms();
+  if(idx===8)startLantern();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ================= 首页 ================= */
+byId('btn-start').addEventListener('click',()=>go(1));
+byId('btn-customs').addEventListener('click',()=>go(7));
+byId('btn-lantern').addEventListener('click',()=>go(8));
+
+/* ================= 对象 ================= */
+(function(){
+  const chips=byId('name-chips'), input=byId('name-input');
+  NAME_CHIPS.forEach(n=>{
+    const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=n;
+    b.addEventListener('click',()=>{input.value=n;document.querySelectorAll('#name-chips .chip').forEach(c=>c.classList.remove('sel'));b.classList.add('sel');});
+    chips.appendChild(b);
+  });
+  byId('btn-object-next').addEventListener('click',()=>{
+    const v=input.value.trim();
+    if(!v){toast('请先写下称呼或姓名');input.focus();return;}
+    STATE.name=v;go(2);
+  });
+})();
+
+/* ================= 地区 ================= */
+let regionSel=0;
+const REGION_GROUPS = ['通用','华北','东北','西北','华中','华东','西南','华南'];
+function renderRegions(){
+  const grid=byId('region-grid');grid.innerHTML='';
+  REGION_GROUPS.forEach(g=>{
+    const items=REGIONS.filter(r=>r.grp===g);
+    if(!items.length)return;
+    const sec=document.createElement('div');sec.className='rgroup';
+    if(g!=='通用'){
+      const h=document.createElement('div');h.className='rgroup-h';h.textContent=g;sec.appendChild(h);
+    }
+    const row=document.createElement('div');row.className='rgroup-grid';
+    items.forEach(r=>{
+      const card=document.createElement('div');card.className='region-card'+(r.id===STATE.region?' on':'');
+      card.innerHTML=mark(r.name)+'<div class="rn">'+esc(r.name)+'</div><div class="rt">'+esc(r.tag)+'</div>';
+      card.addEventListener('click',()=>{STATE.region=r.id;renderRegions();});
+      row.appendChild(card);
+    });
+    sec.appendChild(row);
+    grid.appendChild(sec);
+  });
+  const r=REGIONS.find(x=>x.id===STATE.region);
+  byId('region-tip').textContent='已选：'+r.name+' —— '+r.way;
+}
+byId('btn-region-next').addEventListener('click',()=>go(3));
+
+/* ================= 供品 ================= */
+function renderOffer(){
+  const grid=byId('offer-grid');grid.innerHTML='';
+  const list=allOfferings();
+  const r=REGIONS.find(x=>x.id===STATE.region);
+  byId('region-badge').innerHTML=mark(r.name,20)+esc(r.name)+' · '+esc(r.tag);
+  list.forEach(o=>{
+    const card=document.createElement('div');card.className='item';
+    const val=STATE.qty[o.id]||0;
+    let denomRow='';
+    if(o.id==='zhiqian'){
+      denomRow='<div class="denom-wrap">'
+        +MONEY_DENOMS.map(d=>'<button type="button" class="denom-chip'+(d===STATE.moneyDenom?' sel':'')+'" data-d="'+d+'">'+d+'</button>').join('')
+        +'</div>';
+    }
+    // 生动的供品堆：选 N 份就在堆里叠 N 个纸品小图标
+    const shown=Math.min(val,5);
+    let pile='';
+    for(let i=0;i<shown;i++){
+      pile+='<span class="pile-i" style="--i:'+i+'">'+pico(o.fig,'')+'</span>';
+    }
+    if(val>5){pile+='<span class="pile-more">+'+val+ '</span>';}
+    card.innerHTML='<div class="fig big">'+pico(o.fig,'')+'</div>'
+      +'<div class="nm">'+esc(o.name)+'</div>'
+      +denomRow
+      +'<div class="pile">'+(val>0?pile:'<span class="pile-empty">轻触放入</span>')+'</div>'
+      +(val>0?'<button type="button" class="pile-sub" aria-label="减一份">−</button>':'');
+    if(val>0)card.classList.add('on');
+    // 点卡片 = 放一份（生动：堆叠加一个）
+    card.addEventListener('click',()=>{STATE.qty[o.id]=(STATE.qty[o.id]||0)+1;renderOffer();});
+    const sub=card.querySelector('.pile-sub');
+    if(sub)sub.addEventListener('click',e=>{e.stopPropagation();if((STATE.qty[o.id]||0)>0)STATE.qty[o.id]--;renderOffer();});
+    if(o.id==='zhiqian'){
+      card.querySelectorAll('.denom-chip').forEach(ch=>{
+        ch.addEventListener('click',e=>{e.stopPropagation();STATE.moneyDenom=ch.dataset.d;renderOffer();});
+      });
+    }
+    grid.appendChild(card);
+  });
+  syncSum();
+}
+function syncSum(){
+  const list=allOfferings();
+  const t=list.reduce((s,o)=>s+(STATE.qty[o.id]||0),0);
+  byId('sum-cnt').innerHTML='已选 <b>'+t+'</b> 份';
+  byId('btn-offer-next').disabled = t===0;
+  byId('offer-hint').textContent = t===0?'（请至少挑选一份供品）':'已为 '+STATE.name+' 备好 '+t+' 份心意';
+}
+byId('btn-offer-next').addEventListener('click',()=>go(4));
+
+/* ================= 焚化 ================= */
+let fireCtx=null,fireOn=false,fireRaf=null,fireParts=[],ashParts=[];
+/* 烧纸音效：Web Audio 合成（火焰+噼啪），需用户点击点火后触发 */
+let burnAudio={ctx:null,master:null,flameOn:false,crackleTimer:null,muted:false};
+function ensureAudio(){
+  if(burnAudio.ctx)return true;
+  try{
+    const C=window.AudioContext||window.webkitAudioContext;
+    if(!C)return false;
+    burnAudio.ctx=new C();
+    burnAudio.master=burnAudio.ctx.createGain();
+    burnAudio.master.gain.value=0.6;
+    burnAudio.master.connect(burnAudio.ctx.destination);
+    return true;
+  }catch(e){return false;}
+}
+function startFlameSound(){
+  if(!ensureAudio()||burnAudio.flameOn)return;
+  const ctx=burnAudio.ctx, master=burnAudio.master;
+  // 低频火焰轰鸣（两层噪声）
+  const noise=ctx.createBufferSource();
+  noise.buffer=(function(){
+    const b=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate);
+    const d=b.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+    return b;
+  })();
+  noise.loop=true;
+  const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=420;
+  const gn=ctx.createGain();gn.gain.value=0.16;
+  noise.connect(lp);lp.connect(gn);gn.connect(master);
+  noise.start();
+  // 高音细碎"烧纸沙沙"
+  const hiss=ctx.createBufferSource();
+  hiss.buffer=(function(){
+    const b=ctx.createBuffer(1,ctx.sampleRate*1.5,ctx.sampleRate);
+    const d=b.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+    return b;
+  })();
+  hiss.loop=true;
+  const hp=ctx.createBiquadFilter();hp.type='bandpass';hp.frequency.value=2600;hp.Q.value=0.6;
+  const hg=ctx.createGain();hg.gain.value=0.05;
+  hiss.connect(hp);hp.connect(hg);hg.connect(master);
+  hiss.start();
+  // 噼啪爆裂（定时随机：火烧木头低频厚实爆裂 + 火烧纸高频细碎，混合真实感）
+  burnAudio.flameOn=true;
+  burnAudio.noise=noise;burnAudio.hiss=hiss;
+  const crack=()=>{
+    if(!burnAudio.flameOn||!burnAudio.ctx)return;
+    const ctx=burnAudio.ctx, M=burnAudio.master;
+    const roll=Math.random();
+    const pop=(f0,f1,gAmp,gDec,tMax)=>{
+      const o=ctx.createOscillator();const g=ctx.createGain();
+      o.type='square';o.frequency.value=f0+Math.random()*f1;
+      g.gain.setValueAtTime(0.0001,ctx.currentTime);
+      g.gain.linearRampToValueAtTime(gAmp,ctx.currentTime+0.006);
+      g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+gDec);
+      o.connect(g);g.connect(M);
+      o.start();o.stop(ctx.currentTime+tMax);
+    };
+    if(roll<0.4){
+      // 火烧木头：低频厚实爆裂（80–240Hz，衰减较长，像木柴开裂）
+      pop(80,160,0.09+Math.random()*0.06,0.16+Math.random()*0.10,0.30);
+    }else if(roll<0.82){
+      // 火烧纸：高频细碎噼啪（1400–3600Hz，短促）
+      pop(1400,2200,0.035+Math.random()*0.05,0.045+Math.random()*0.02,0.07);
+    }else{
+      // 密集段：木头爆裂 + 纸碎同时（焚烧旺时）
+      pop(100,180,0.05+Math.random()*0.04,0.10+Math.random()*0.08,0.20);
+      pop(1500,2000,0.025+Math.random()*0.03,0.04,0.06);
+    }
+    burnAudio.crackleTimer=setTimeout(crack,90+Math.random()*180);
+  };
+  crack();
+}
+function stopFlameSound(){
+  burnAudio.flameOn=false;
+  if(burnAudio.crackleTimer){clearTimeout(burnAudio.crackleTimer);burnAudio.crackleTimer=null;}
+  try{
+    if(burnAudio.noise){burnAudio.noise.stop();}
+    if(burnAudio.hiss){burnAudio.hiss.stop();}
+  }catch(e){}
+  burnAudio.noise=null;burnAudio.hiss=null;
+}
+function cancelBurn(){
+  fireOn=false;if(fireRaf)cancelAnimationFrame(fireRaf);fireRaf=null;fireParts=[];ashParts=[];
+  stopFlameSound();
+}
+function startBurn(){
+  const r=REGIONS.find(x=>x.id===STATE.region);
+  byId('burn-title').textContent='为 '+STATE.name+' 焚化供品';
+  byId('burn-sub').textContent=r.way;
+  const papers=byId('papers');papers.innerHTML='';
+  const list=allOfferings();
+  list.forEach(o=>{
+    const q=STATE.qty[o.id]||0;if(!q)return;
+    const p=document.createElement('div');p.className='pkind';p.dataset.id=o.id;
+    const denomTxt=(o.id==='zhiqian')?' '+STATE.moneyDenom:'';
+    p.innerHTML='<div class="fig">'+pico(o.fig,'')+'</div><div class="pn">'+esc(o.name)+'</div><span class="n">'+esc(denomTxt)+' ×'+q+'</span>';
+    p.style.setProperty('--r',(Math.random()*14-7)+'deg');
+    papers.appendChild(p);
+  });
+  byId('burn-ok').classList.remove('show');
+  byId('btn-ignite').style.display='';
+  byId('btn-ignite').disabled=false;
+  byId('burn-tip').textContent='一点火，念即达';
+  cancelBurn();
+  const cv=byId('fireCanvas');
+  const rect=cv.getBoundingClientRect();const dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.width=rect.width*dpr;cv.height=rect.height*dpr;
+  fireCtx=cv.getContext('2d');fireCtx.scale(dpr,dpr);
+  // 记录纸品锚点（供灰烬粒子出生位置）
+  window.__ashAnchors=null;
+  drawFurnace();   // 进入焚化页即先画出祭祀炉
+}
+// 火炉 + 进炉动画：纸品逐张飞入祭祀炉，炉口微光、烟气上飘（无火焰动效）
+// 祭祀焚烧炉（铁皮瓦瓮造型）：炉膛火光脉动、火星上蹿、进炉冒烟与灰烬
+let smokeParts=[];            // 烟气粒子
+let glowSparks=[];            // 炉口上蹿的小火星（轻量火光，非完整火焰）
+// 画祭祀焚烧炉
+function drawFurnace(){
+  const cv=byId('fireCanvas'); if(!cv)return;
+  const R=cv.getBoundingClientRect();
+  const w=R.width,h=R.height; if(w===0||h===0)return;
+  const fx=w/2, baseY=h*0.97, fw=Math.min(210,w*0.60), fh=fw*0.78;
+  const t=performance.now()/1000;
+  // 炉口中心（供纸品飞入目标，记录供 mouthCenter 读取）
+  const mouthX=fx, mouthY=baseY-fh*0.52;
+  window.__mouth={x:mouthX,y:mouthY};
+  fireCtx.clearRect(0,0,w,h);
+  // 炉膛火光（脉动，进炉时更亮）
+  const pulse=0.8+0.2*Math.sin(t*2.6);
+  // 炉口向上弥散的光锥（晃动）
+  const shaft=fireCtx.createRadialGradient(fx,mouthY,0,fx,mouthY,fh*1.1);
+  shaft.addColorStop(0,'rgba(255,186,96,'+(0.42*pulse)+')');
+  shaft.addColorStop(0.4,'rgba(240,120,50,'+(0.18*pulse)+')');
+  shaft.addColorStop(1,'rgba(240,120,50,0)');
+  fireCtx.fillStyle=shaft;fireCtx.beginPath();fireCtx.arc(fx,mouthY,fh*1.1,0,6.28);fireCtx.fill();
+  // ---- 炉膛内焰（炉口里一团跳动的火光，不是外喷火焰） ----
+  const inR=fw*0.30;
+  const fl=fireCtx.createRadialGradient(fx,mouthY,0,fx,mouthY,inR);
+  fl.addColorStop(0,'rgba(255,232,170,'+(0.95*pulse)+')');
+  fl.addColorStop(0.4,'rgba(255,178,80,'+(0.8*pulse)+')');
+  fl.addColorStop(0.75,'rgba(226,110,42,'+(0.5*pulse)+')');
+  fl.addColorStop(1,'rgba(180,70,25,0)');
+  fireCtx.fillStyle=fl;fireCtx.beginPath();fireCtx.arc(fx,mouthY,inR*1.1,0,6.28);fireCtx.fill();
+  // 炉口里几条短火舌（在炉口内跳动，不外溢，象征燃烧）
+  for(let k=0;k<5;k++){
+    const ox=fx+(k-2)*inR*0.42+Math.sin(t*3.1+k)*inR*0.08;
+    const oy=mouthY-Math.abs(Math.sin(t*2.2+k*1.3))*inR*0.55;
+    const rw=inR*(0.28+0.1*Math.sin(t*3.4+k));
+    const rh=inR*(0.5+0.18*Math.sin(t*2.6+k*1.1));
+    const fg=fireCtx.createRadialGradient(ox,oy,0,ox,oy,rh);
+    fg.addColorStop(0,'rgba(255,240,190,'+(0.85*pulse)+')');
+    fg.addColorStop(0.5,'rgba(255,170,75,'+(0.55*pulse)+')');
+    fg.addColorStop(1,'rgba(255,130,50,0)');
+    fireCtx.fillStyle=fg;
+    fireCtx.beginPath();fireCtx.ellipse(ox,oy,rw,rh,0,0,6.28);fireCtx.fill();
+  }
+  // ---- 铁皮/瓦瓮炉体（侧视圆柱，上宽下窄，铁灰） ----
+  fireCtx.save();
+  // 炉体
+  const topW=fw*0.42, botW=fw*0.34, topY=baseY-fh*0.52, botY=baseY-fh*0.06;
+  const bodyG=fireCtx.createLinearGradient(fx-topW,baseY,fx+topW,baseY);
+  bodyG.addColorStop(0,'#3b3530');
+  bodyG.addColorStop(0.5,'#57504a');
+  bodyG.addColorStop(1,'#2e2925');
+  fireCtx.fillStyle=bodyG;
+  fireCtx.beginPath();
+  fireCtx.moveTo(fx-topW,topY);
+  fireCtx.lineTo(fx+topW,topY);
+  fireCtx.quadraticCurveTo(fx+topW+botW*0.1,botY, fx+botW,botY);
+  fireCtx.lineTo(fx-botW,botY);
+  fireCtx.quadraticCurveTo(fx-topW-botW*0.1,botY, fx-topW,topY);
+  fireCtx.closePath();fireCtx.fill();
+  fireCtx.strokeStyle='#1d1916';fireCtx.lineWidth=2;fireCtx.stroke();
+  // 炉口外沿（凸边）
+  fireCtx.fillStyle='#4a423c';
+  fireCtx.beginPath();fireCtx.ellipse(fx,topY,fw*0.43,fw*0.13,0,0,6.28);fireCtx.fill();
+  fireCtx.strokeStyle='#221d19';fireCtx.lineWidth=2;fireCtx.stroke();
+  // 炉口内（深色，露火光边缘）
+  fireCtx.fillStyle='#1a1410';
+  fireCtx.beginPath();fireCtx.ellipse(fx,topY,fw*0.36,fw*0.10,0,0,6.28);fireCtx.fill();
+  // 横向铁箍（两道）+ 铆钉
+  fireCtx.strokeStyle='#6b6159';fireCtx.lineWidth=3;
+  fireCtx.beginPath();fireCtx.ellipse(fx,baseY-fh*0.36,fw*0.40,fh*0.10,0,0,6.28);fireCtx.stroke();
+  fireCtx.beginPath();fireCtx.ellipse(fx,baseY-fh*0.18,fw*0.36,fh*0.09,0,0,6.28);fireCtx.stroke();
+  fireCtx.fillStyle='#7c7268';
+  for(let k=0;k<7;k++){
+    const ang=k/6*3.14;   // 前弧分布铆钉
+    fireCtx.beginPath();fireCtx.arc(fx-Math.cos(ang)*fw*0.40, (baseY-fh*0.36)+Math.sin(ang)*fh*0.10, 2.4, 0, 6.28);fireCtx.fill();
+  }
+  // 底部收口 + 出灰口
+  fireCtx.fillStyle='#2a2420';
+  fireCtx.beginPath();fireCtx.ellipse(fx,botY,fw*0.35,fh*0.06,0,0,6.28);fireCtx.fill();
+  // 出灰口（炉身底部小方口）
+  fireCtx.fillStyle='#1b1714';
+  fireCtx.fillRect(fx-fw*0.12,botY-fh*0.14,fw*0.24,fh*0.10);
+  fireCtx.strokeStyle='#57504a';fireCtx.strokeRect(fx-fw*0.12,botY-fh*0.14,fw*0.24,fh*0.10);
+  // 炉口上蹿的小火星（轻量火光）
+  if(glowSparks.length<16 && Math.random()<0.5){
+    glowSparks.push({x:fx+(Math.random()-0.5)*fw*0.3,y:mouthY,vx:(Math.random()-0.5)*0.6,vy:-(0.7+Math.random()*1.1),
+      r:1.2+Math.random()*2.2,life:1,decay:0.02+Math.random()*0.02});
+  }
+  glowSparks.forEach(s=>{
+    s.x+=s.vx;s.y+=s.vy;s.vy-=0.02;s.life-=s.decay;
+    if(s.life>0){
+      fireCtx.fillStyle='rgba(255,'+(150+80*s.life)+',70,'+(s.life*0.9)+')';
+      fireCtx.beginPath();fireCtx.arc(s.x,s.y,Math.max(0.5,s.r*s.life),0,6.28);fireCtx.fill();
+    }
+  });
+  glowSparks=glowSparks.filter(s=>s.life>0);
+  // 灰烬粒子（进炉后从炉口飘出，象征烧化的心意随风而上）
+  ashParts.forEach(a=>{
+    a.x+=a.vx;a.y+=a.vy;a.vy-=0.04;a.vx+=Math.sin(a.rot+a.y*0.05)*0.06;a.rot+=a.vr;a.life-=a.decay;
+    if(a.life>0){
+      fireCtx.save();fireCtx.translate(a.x,a.y);fireCtx.rotate(a.rot);fireCtx.scale(a.s,a.s);
+      fireCtx.fillStyle='rgba(118,106,94,'+(a.life*0.85)+')';
+      fireCtx.fillRect(-a.w/2,-a.h/2,a.w,a.h);
+      fireCtx.restore();
+    }
+  });
+  ashParts=ashParts.filter(a=>a.life>0);
+  // 烟气粒子（进炉冒出的轻烟）
+  smokeParts.forEach(s=>{
+    s.x+=s.vx;s.y+=s.vy;s.vy-=0.03;s.vx+=Math.sin(s.seed+s.y*0.05)*0.02;s.life-=s.decay;
+    if(s.life>0){
+      fireCtx.fillStyle='rgba(190,170,150,'+(s.life*0.35)+')';
+      fireCtx.beginPath();fireCtx.arc(s.x,s.y,s.r*(1.4-s.life),0,6.28);fireCtx.fill();
+    }
+  });
+  smokeParts=smokeParts.filter(s=>s.life>0);
+  fireCtx.restore();
+}
+function spawnSmoke(cx,cy){
+  for(let i=0;i<3;i++){
+    smokeParts.push({x:cx+(Math.random()-0.5)*8,y:cy,vx:(Math.random()-0.5)*0.5,vy:-(0.4+Math.random()*0.7),
+      r:5+Math.random()*8,life:1,decay:0.012+Math.random()*0.012,seed:Math.random()*9});
+  }
+}
+// 进炉时从炉口产生灰烬（复用 spawnAsh 逻辑，出生点取炉口中心）
+function spawnAshAtMouth(){
+  const R=byId('fireCanvas').getBoundingClientRect();
+  const m=window.__mouth||{x:R.width/2,y:R.height*0.4};
+  const cx=m.x, cy=m.y;
+  const n=12+Math.floor(Math.random()*6);
+  for(let i=0;i<n;i++){
+    ashParts.push({
+      x:cx+(Math.random()-0.5)*18, y:cy+(Math.random()-0.5)*10,
+      vx:(Math.random()-0.5)*1.2, vy:-(0.5+Math.random()*1.5),
+      w:2.5+Math.random()*4, h:2+Math.random()*3, rot:Math.random()*6.28, vr:(Math.random()-0.5)*0.25,
+      s:0.7+Math.random()*0.7, life:1, decay:0.008+Math.random()*0.012
+    });
+  }
+}
+// 炉口坐标（供纸品飞入目标）
+function mouthCenter(){
+  const cv=byId('fireCanvas');const R=cv.getBoundingClientRect();
+  if(window.__mouth)return {x:window.__mouth.x,y:window.__mouth.y};
+  const fw=Math.min(200,R.width*0.56), fh=fw*0.62, baseY=R.height*0.96;
+  return {x:R.width/2, y:baseY-fh*0.5};
+}
+function startFurnaceRaf(){
+  if(fireRaf)cancelAnimationFrame(fireRaf);
+  const loop=()=>{ drawFurnace(); fireRaf=requestAnimationFrame(loop); };
+  fireRaf=requestAnimationFrame(loop);
+}
+byId('btn-ignite').addEventListener('click',()=>{
+  if(fireOn)return;fireOn=true;
+  byId('btn-ignite').disabled=true;
+  byId('burn-tip').textContent='纸品投入炉中，心意正在传递…';
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduced)startFlameSound();
+  const paperEls=[...document.querySelectorAll('#papers .pkind')];
+  const stage=byId('fireCanvas').getBoundingClientRect();
+  drawFurnace();               // 先画一次炉子，确保炉口坐标就绪
+  const m=mouthCenter();
+  const ox=m.x, oy=m.y;
+  // 逐张进炉：纸品被火舌带起——先向上扬起，再成抛物线落入炉口（缩小+旋转+淡出）
+  const total=paperEls.length;
+  const BATCH=3, PER=820;
+  paperEls.forEach((p,i)=>{
+    const batch=Math.floor(i/BATCH);
+    const inBatch=i%BATCH;
+    const t=560+batch*PER+inBatch*260;
+    setTimeout(()=>{
+      const pr=p.getBoundingClientRect();
+      const cx=pr.left+pr.width/2 - stage.left;
+      const cy=pr.top+pr.height/2 - stage.top;
+      const dx=ox-cx, dy=oy-cy;
+      // 上抛高度：有下限保证每件都成明显抛物线（远的高、近的也有可观弧度）
+      const lift=Math.max(66,Math.min(116,Math.abs(dy)*0.30))+24;
+      const rot1=(Math.random()*40-20), rot2=(Math.random()*70-35);
+      if(p.animate){
+        const anim=p.animate([
+          {transform:'translate(0px,0px) scale(1) rotate(0deg)',opacity:1,offset:0},
+          {transform:'translate('+(dx*0.5)+'px,'+(dy*0.5-lift)+'px) scale(0.74) rotate('+rot1+'deg)',opacity:1,offset:0.4},
+          {transform:'translate('+dx+'px,'+dy+'px) scale(0.06) rotate('+rot2+'deg)',opacity:0,offset:1}
+        ],{duration:1000,easing:'cubic-bezier(.42,.05,.62,1)'});
+        anim.onfinish=()=>p.remove();
+      }else{
+        p.style.transition='transform .85s cubic-bezier(.5,-0.2,.6,1),opacity .85s linear';
+        p.style.transform='translate('+dx+'px,'+dy+'px) scale(0.12) rotate('+rot2+'deg)';
+        p.style.opacity='0';
+        p.classList.add('fly');
+      }
+      setTimeout(()=>p.remove(),1150);   // 兜底清理
+      // 进炉瞬间炉口火光闪一下 + 冒烟
+      spawnSmoke(ox,oy);
+      spawnAshAtMouth();
+    },t);
+  });
+  const batches=Math.max(1,Math.ceil(total/BATCH));
+  // 炉口微光 + 烟气持续绘制（无火焰动效）
+  startFurnaceRaf();
+  // 全部完成
+  setTimeout(()=>{
+    fireOn=false;if(fireRaf)cancelAnimationFrame(fireRaf);fireRaf=null;smokeParts=[];ashParts=[];
+    stopFlameSound();
+    const R=byId('fireCanvas').getBoundingClientRect();
+    fireCtx.clearRect(0,0,R.width,R.height);
+    byId('burn-ok').classList.add('show');
+    byId('btn-ignite').style.display='none';
+    byId('burn-tip').textContent='供品已入炉，心意已被收下';
+  }, 760 + batches*PER + 2400);
+});
+function spawnAsh(idx){
+  if(!window.__ashAnchors||!window.__ashAnchors[idx])return;
+  const R=byId('fireCanvas').getBoundingClientRect();
+  const a=window.__ashAnchors[idx];
+  const cx=a.x*R.width, cy=a.y*R.height;
+  const n=10+Math.floor(Math.random()*6);
+  for(let i=0;i<n;i++){
+    ashParts.push({
+      x:cx+(Math.random()-0.5)*26, y:cy+(Math.random()-0.5)*12,
+      vx:(Math.random()-0.5)*1.1, vy:-(0.5+Math.random()*1.4),
+      w:2.5+Math.random()*4, h:2+Math.random()*3, rot:Math.random()*6.28, vr:(Math.random()-0.5)*0.25,
+      s:0.7+Math.random()*0.7, life:1, decay:0.008+Math.random()*0.012
+    });
+  }
+}
+byId('btn-message-go')?.addEventListener('click',()=>go(5));
+
+/* ================= 寄语 ================= */
+(function(){
+  const preset=byId('msg-preset'), area=byId('msg-area');
+  MSG_PRESETS.forEach(m=>{
+    const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=m;
+    b.addEventListener('click',()=>{area.value=m;area.focus();document.querySelectorAll('#msg-preset .chip').forEach(c=>c.classList.remove('sel'));b.classList.add('sel');});
+    preset.appendChild(b);
+  });
+  byId('btn-message-next').addEventListener('click',()=>go(6));
+})();
+
+/* ================= 回执 ================= */
+function renderReceipt(){
+  byId('r-name').textContent=STATE.name;
+  byId('r-who').textContent='寒衣节 · 农历十月初一';
+  const items=byId('r-items');items.innerHTML='';
+  const list=allOfferings();
+  list.forEach(o=>{const q=STATE.qty[o.id]||0;if(q){const nm=(o.id==='zhiqian'?o.name+'（'+STATE.moneyDenom+'）':o.name);items.insertAdjacentHTML('beforeend','<div class="it"><span>'+esc(nm)+'</span><b>×'+q+'</b></div>');}});
+  const mesg=byId('msg-area').value.trim();
+  const rm=byId('r-mesg');
+  rm.textContent=mesg||'愿安好，勿念。';
+  rm.classList.toggle('blank',!mesg);
+  byId('r-date').textContent='公历 2026 年 11 月 9 日 · 星期一 · 丙午年十月初一';
+}
+byId('btn-again').addEventListener('click',()=>{reset();go(1);});
+byId('btn-restart').addEventListener('click',()=>{reset();go(0);});
+function reset(){
+  STATE.name='';STATE.region='gn';STATE.lanternMsg='';STATE.moneyDenom='拾万圆';STATE.qty={};
+  OFFERINGS.forEach(o=>STATE.qty[o.id]=0);
+  Object.keys(REGION_SPECIALS).forEach(k=>STATE.qty[REGION_SPECIALS[k].id]=0);
+  byId('name-input').value='';byId('msg-area').value='';byId('lantern-msg').value='';
+  document.querySelectorAll('#name-chips .chip,#msg-preset .chip,#lantern-preset .chip').forEach(c=>c.classList.remove('sel'));
+}
+
+/* ================= 返回按钮（每步都有） ================= */
+document.querySelectorAll('[data-back]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const cur=STATE.step;
+    if(cur===1)go(0);
+    else if(cur===2)go(1);
+    else if(cur===3)go(2);
+    else if(cur===4)go(3);
+    else if(cur===5)go(4);
+    else if(cur===8)go(0);
+    else go(cur-1);
+  });
+});
+
+/* ================= 各地风俗（全国考证，带来源与核实标注） ================= */
+const CUSTOMS_GROUPS = ['华北','东北','西北','华中','华东','西南','华南','无此俗'];
+const CUSTOMS = [
+  /* —— 华北 —— */
+  {grp:'华北', id:'bj',  name:'北京',   icon:'#i-bag',   tag:'京畿',
+   proverb:'"十月一，鬼穿衣"', verify:'多源核实',
+   src:'故宫博物院《十月初一烧衣节》PDF · 京报网引《大兴县志》',
+   desc:'清初《帝京岁时纪胜》载十月朔"晚夕缄书冥楮，加以五色彩帛作成冠带衣履，于门外奠而焚之，曰送寒衣"。《大兴县志》："十月一日，裁五色纸，作男女衣，曰寒衣，修具祀先，持楮锭焚之。"老北京所焚分三类：白毛头纸糊的包袱（内写先人名号与寄者姓名、注明冥衣金银锭若干）、五色纸折叠粘糊的寒衣、金银纸箔折的金银锭。下午捧包袱出门，先奠酒三杯、焚几张白纸"打发外祟"（散孤魂），再正式焚化包袱。'},
+  {grp:'华北', id:'tj',  name:'天津',   icon:'#i-bag',   tag:'海河卫城',
+   proverb:'"十月一，送寒衣"', verify:'单方称·待核',
+   src:'北方网《天津旧时节令（五）》',
+   desc:'十月初一天津习俗迎城隍于西郊赦孤，民间以此日为鬼节。人无贫富，皆于日或夜祭奠祖考，烧用腊花纸（点染花色的蜡光五色纸）剪的五色冥衣及纸帛。'},
+  {grp:'华北', id:'tj-jz', name:'天津蓟州', icon:'#i-snow', tag:'燕山南麓',
+   proverb:'', verify:'多源核实',
+   src:'天津市蓟州区人民政府《时岁习俗》',
+   desc:'蓟州区政府官网载："农历十月初一为寒衣节，这天家家剪纸为衣，在坟前村外路口焚烧，为死者送寒衣。这一风俗至今尚存。"上不去坟的在村外路口画圈焚烧。'},
+  {grp:'华北', id:'hb-dx', name:'河北定兴', icon:'#i-fire', tag:'冀中',
+   proverb:'', verify:'多源核实',
+   src:'中国民俗学会（引光绪《定兴县志》、咸丰《固安县志》）',
+   desc:'光绪《定兴县志》："[十月]初一，拜墓，焚五色纸衣，祭多以柿。时当授衣，故以事人者事鬼也。"祭品以柿子为特色（谐音"事"、取秋实）。固安县志："剪楮为衣，裹以纸钱焚之，谓之送寒衣。"'},
+  {grp:'华北', id:'hb-hd', name:'河北邯郸', icon:'#i-bowl', tag:'冀南',
+   proverb:'"早清明，晚寒日"', verify:'多源核实',
+   src:'中国民俗学会论文（引《邯郸民俗录存》）',
+   desc:'邯郸民俗以为十月一日是"放鬼"之日（清明是"收鬼"），故烧纸要"晚"：十月初一午后至傍晚烧纸衣，上午烧怕鬼未放出收不到。这是华北寒衣节"下午/傍晚烧"的民俗时间依据。'},
+  {grp:'华北', id:'hb-lc', name:'河北栾城', icon:'#i-house', tag:'冀中棉乡',
+   proverb:'', verify:'多源核实',
+   src:'燕赵晚报《寒衣节与栾城东岳庙》',
+   desc:'栾城"始终保持着寒衣节祭扫过庙会这一习俗"，城东东岳庙每年寒衣节（十月初一至初六）庙会最盛，兼为华北土布交易大集——罕见的"寒衣节+地方庙会+土布集市"三位一体。'},
+  {grp:'华北', id:'hb-cz', name:'河北沧州', icon:'#i-bag', tag:'冀东南/冀北',
+   proverb:'', verify:'多源核实',
+   src:'识典古籍《沧州志》 · 陕师大民俗研究中心（引道光《万全县志》）',
+   desc:'清《沧州志》："十月一日，携酒脯登墓祭奠，剪彩纸为衣裳焚之，谓之送寒衣。"道光《万全县志》："（十月）朔日，剪楮为寒衣焚墓，为寒衣节。"'},
+  {grp:'华北', id:'sx-jb', name:'山西晋北', icon:'#i-fire', tag:'雁北大同',
+   proverb:'', verify:'多源核实',
+   src:'山西文化资源网 · 科普中国 · 中国民俗学会论文',
+   desc:'晋北"要在五色纸里夹一些棉花，意为亡者作棉衣、棉被"；雁北、晋中平遥一带傍晚妇女要在门外放声大哭，谓之"哭寒衣"；傍晚到十字路口另烧五色纸赈绝户孤魂，免其争抢送亲人的寒衣。'},
+  {grp:'华北', id:'sx-jxb', name:'山西晋西北', icon:'#i-house', tag:'吕梁临县',
+   proverb:'"粘纸成衣费剪裁，凌晨烧去化灰埃"', verify:'多源核实（纸房舍两说并存）',
+   src:'山西文化资源网 · 科普中国',
+   desc:'晋西北送寒衣时，要将五色纸分别做成衣、帽、鞋、被等，甚至要做一套房子，瓦柱门窗齐全，非常精致。临县旧日凌晨焚烧；送亡者衣物冥钞房舍"必须烧得干干净净"忌留纸渣。注：纸房舍一俗，中国网/科普中国系于晋北，山西文化资源网系于晋西北，两说并存。'},
+  {grp:'华北', id:'sx-jn', name:'山西晋南', icon:'#i-bag', tag:'临汾运城',
+   proverb:'', verify:'多源核实',
+   src:'山西文化资源网 · 科普中国',
+   desc:'晋南、大同等地送寒衣时，要在五色纸里夹一些棉花，意为亡者作棉衣、棉被；烧寒衣晋南一般要到坟地进行。'},
+  {grp:'华北', id:'sx-jz', name:'山西晋中', icon:'#i-map', tag:'平遥太原',
+   proverb:'', verify:'多源核实',
+   src:'太原市人民政府（环保焚烧袋）',
+   desc:'平遥、临县凌晨焚烧寒衣；太原城区至今保留街头焚烧寒衣的普遍习俗，2024 年市政府免费发放 58 万个环保焚烧袋、设 737 个集中发放点疏导。'},
+  /* —— 东北 —— */
+  {grp:'东北', id:'nm-hhht', name:'内蒙古·呼市', icon:'#i-snow', tag:'塞北汉族聚居区',
+   proverb:'', verify:'单方称·待核',
+   src:'呼和浩特文明网',
+   desc:'赛罕区城管局寒衣节设置多个文明祭祀点、黄色焚烧桶，证实呼市汉族市民至今保留路口烧纸习俗。此俗由"走西口"汉族移民带入；蒙古族传统不过此节。'},
+  {grp:'东北', id:'ln-sy', name:'辽宁·沈阳', icon:'#i-fire', tag:'辽河平原',
+   proverb:'"十月一，送寒衣"', verify:'多源核实',
+   src:'人民网辽宁频道 · 沈阳文明网 · 环球网转沈阳晚报',
+   desc:'沈阳市文史馆馆员张志强："用五色纸做成冥衣，于十月初一到来之际在已故亲人坟前或路口加以焚烧，这一祭祀习俗相延数千年而不衰。"2003 年沈阳晚报实录傍晚至次日凌晨全城 17 处烧纸点黑烟滚滚——东北城市寒衣节规模远超清明。'},
+  {grp:'东北', id:'jl-cc', name:'吉林·长春', icon:'#i-snow', tag:'松辽平原',
+   proverb:'', verify:'单方称·待核（现代治理报道）',
+   src:'长春市人民政府 · 中国吉林网',
+   desc:'长春市政府官网记录寒衣节夜间街面巡查整治；长春市殡葬服务中心联合举办"初冬寄寒衣"集体公祭；长吉两市布设 625 个文明祭祀点位。此俗系"闯关东"移民带入，缺方志原文。'},
+  {grp:'东北', id:'hlj-hrb', name:'黑龙江·哈尔滨', icon:'#i-snow', tag:'松花江畔',
+   proverb:'', verify:'单方称·待核（行业报道佐证）',
+   src:'东北网黑龙江',
+   desc:'东北网报道烧纸产业链将寒衣节与清明、中元并列为三大销售旺季；绥化青冈民间保留"打表写收件地址、先烧冥币再烧金元宝、最后烧棉衣"整套流程。清代《宁古塔记略》未载此俗，系近代闯关东移民带入。'},
+  /* —— 西北 —— */
+  {grp:'西北', id:'sx-lt', name:'陕西临潼', icon:'#i-bowl', tag:'关中',
+   proverb:'鸡鸣焚纸，迎寒衣', verify:'多源核实',
+   src:'故宫博物院PDF（引《临潼县志》） · 《中国地方志民俗资料汇编·西北卷》',
+   desc:'清《临潼县志》："十月一日，鸡鸣，焚纸，献馄饨祭先，谓之迎（送）寒衣。"鸡初鸣即起，门前或坟前焚纸，以馄饨（关中扁食）为供。今关中农村仍存，焚烧时间近年有改到黄昏晚者。'},
+  {grp:'西北', id:'sx-cw', name:'陕西长武', icon:'#i-bag', tag:'关中渭北',
+   proverb:'"十月一，送棉衣"', verify:'多源核实',
+   src:'长武县人民政府《方志里的长武》',
+   desc:'《长武县志》："人们用纸折成衣服形状，夹裹棉絮，去坟茔或十字路口焚烧棉衣和冥票……烧纸时，就地划一圆圈，意为孝敬自己亲人的，以防别人抢占。十月一这天，庄基周围可任意动土修建或拆除、伐树。"长武人这天活人换冬装与亡人送衣同步。'},
+  {grp:'西北', id:'sx-wn', name:'陕西渭南', icon:'#i-map', tag:'关中东部',
+   proverb:'"十月一，送寒衣"', verify:'多源核实',
+   src:'陕西师范大学（引《渭南地区志》）',
+   desc:'是日鸡啼（近年改黄昏晚）在村口、坟前或十字路口焚烧纸钱和纸状棉衣，棉须中夹籽棉，表示"后继有子"。'},
+  {grp:'西北', id:'sx-xx', name:'陕西西乡', icon:'#i-house', tag:'陕南汉江',
+   proverb:'"十月一，放雇的"', verify:'单方称·待核',
+   src:'《中国地方志民俗资料汇编·西北卷》引《西乡县志》',
+   desc:'《西乡县志》："十月一日，佣工人皆是日放还。"十月朔同时是雇主给长工结账放假之日，并以十月朔占次年春粮贵贱。'},
+  {grp:'西北', id:'sx-fx', name:'陕西凤翔', icon:'#i-bowl', tag:'关中西府',
+   proverb:'', verify:'单方称·待核',
+   src:'《中国地方志民俗资料汇编·西北卷》引《凤翔县志》',
+   desc:'《凤翔县志》："十月朔日，用扁食祀先"（水饺）；同日农功报赛、祭献山神迎赛经月不绝。'},
+  {grp:'西北', id:'hn-ly', name:'河南洛阳', icon:'#i-bowl', tag:'河洛',
+   proverb:'"十月一，油唧唧"', verify:'多源核实',
+   src:'中国网河南 · 松阳新闻网',
+   desc:'洛阳话"十月一，油唧唧"，谓此日烹炸食品、剁肉包饺子备供。天黑前抓土灰在家门前撒灰圈，焚香上供，燃烧纸衣、纸锭；讲究人家特意到离家不远的十字路口为"游魂路鬼"送寒衣。新安县：新出嫁媳妇逢十月初一须为夫家新故老人添土。'},
+  {grp:'西北', id:'hn-kf', name:'河南开封/太康', icon:'#i-fire', tag:'豫东',
+   proverb:'"早清明，晚十月一"', verify:'多源核实',
+   src:'开封日报副刊《乡间寒衣节》',
+   desc:'豫东俗称"十月一儿"，赶祖茔祭扫摆供焚香烧纸。供品多为圆蒸馍、大肉方；坟前先铺黄纸摆供，用柳枝画半个圆圈，圈内烧几刀纸防孤魂野鬼抢，边烧边念"爹、娘，坐起来拾钱吧，天冷了，儿孙来送寒衣了"。'},
+  {grp:'西北', id:'hn-ay', name:'河南安阳', icon:'#i-map', tag:'豫北',
+   proverb:'', verify:'多源核实',
+   src:'安阳市城市管理局',
+   desc:'安阳市城管委历年发布《寒衣节文明祭扫倡议书》，确认市民在道路交叉口、游园广场、社区烧纸钱冥物已成集中现象——证明豫北民间保留路口烧纸送寒衣传统，现多转向公墓/鲜花祭扫。'},
+  {grp:'西北', id:'gs-lz', name:'甘肃兰州', icon:'#i-fire', tag:'陇中',
+   proverb:'', verify:'多源核实',
+   src:'《中国地方志民俗资料汇编·西北卷》引《皋兰县续志》 · 兰州市民政局',
+   desc:'《皋兰县续志》："孟冬朔，焚寒衣、纸钱于门外，云招魂。"兰州十月朔在大门外焚寒衣纸钱，带"招魂"意味；2025 年兰州市殡管办倡导鲜花祭扫，民间门外烧纸仍见于城郊。'},
+  {grp:'西北', id:'gs-ts', name:'甘肃天水', icon:'#i-bag', tag:'陇东南',
+   proverb:'', verify:'多源核实',
+   src:'《天水年鉴（2018）》 · 甘谷网',
+   desc:'用纸和棉花剪贴成棉衣、鞋、帽，到祖先坟墓或郊外祭奠焚烧；对去世未满三年亡人尤重。在外地工作或先人客死异乡者，把寒衣封包写明寄往地址送城隍庙转交，叫"焚包"。甘谷县：女人剪衣粘成衣状，金箔叠金元宝锭，男人用纸凿打制银元串，白纸裁钞状用手制印板拓印冥钞。'},
+  {grp:'西北', id:'gs-tw', name:'甘肃通渭', icon:'#i-map', tag:'陇中',
+   proverb:'', verify:'多源核实（政府县志单条）',
+   src:'《通渭县志》第二十三编',
+   desc:'十月初一为"寒衣节""拜冬节"，带彩纸剪糊寒衣、香楮茶酒到坟茔或大门外烧送。县境以战国秦长城为界，长城以南送寒衣、以北不送——南北风俗迥异。'},
+  {grp:'西北', id:'gs-zy', name:'甘肃张掖', icon:'#i-bowl', tag:'河西走廊',
+   proverb:'', verify:'单方称·待核',
+   src:'《甘州府志》',
+   desc:'《甘州府志》："十月朔，大族祠堂设祭，以五色纸作衣裳焚之，曰送寒衣。庶民作馄饨奠之，为冬祭。"'},
+  {grp:'西北', id:'gs-dh', name:'甘肃敦煌', icon:'#i-map', tag:'河西西端',
+   proverb:'', verify:'单方称·待核',
+   src:'《敦煌县志》',
+   desc:'《敦煌县志》："十月朔，异城隍神像出城至厉坛，演戏献牲，多焚楮钱。家有客死他乡者，焚楮钱，祭奠于门外。"官方城隍出巡祭孤+民间为客死异乡者门外焚楮招魂。'},
+  {grp:'西北', id:'nx-yc', name:'宁夏银川', icon:'#i-bridge', tag:'银川平原（汉族）',
+   proverb:'', verify:'多源核实',
+   src:'《宁夏府志》 · 宁夏文明网',
+   desc:'清《宁夏府志》："十月朔，大族祠堂设祭，以五色纸作衣裳焚之，曰送寒衣。庶民作馄饨奠之，为冬祭。"当代银川金凤区执法局历年对十字路口和焚香烧纸集中点专项整治。回族等穆斯林不过此节。'},
+  {grp:'西北', id:'qh-xn', name:'青海西宁', icon:'#i-snow', tag:'河湟谷地（汉族）',
+   proverb:'', verify:'多源核实',
+   src:'青海省人民政府网',
+   desc:'西宁为移民城市，寒衣节在汉族聚居区仍盛：2025 年西宁城管局设 167 处临时便民祭祀场点（2023 年 109 处），开放 9:00—23:00 供市民焚烧纸钱冥衣。藏族、回族、土族、撒拉族、蒙古族不过此节。'},
+  {grp:'西北', id:'xj-wlmq', name:'新疆乌鲁木齐', icon:'#i-map', tag:'北疆汉族聚居区',
+   proverb:'', verify:'多源核实',
+   src:'天山网 · 新疆民政厅殡葬规定',
+   desc:'乌鲁木齐各公墓寒衣节祭扫高峰在初一前后数日，市民携纸钱冥币上坟；新疆汉族保留从家乡带来的上坟烧纸送寒衣传统。新疆殡葬条例明确禁止生产经营纸钱纸扎，境内纸扎多由内地带入。维吾尔、哈萨克、回等穆斯林群众不过此节。'},
+  /* —— 华中 —— */
+  {grp:'华中', id:'hub-yc', name:'湖北宜昌', icon:'#i-house', tag:'鄂西三峡',
+   proverb:'', verify:'单方称·待核',
+   src:'清《宜昌府志》卷十一',
+   desc:'清《宜昌府志》："十月朔日，扫墓奠祭，如清明仪，且为纸服焚之，谓之送寒衣。"鄂西长江流域自清代即有送寒衣，非北方独有。'},
+  {grp:'华中', id:'hub-sy', name:'湖北十堰/武当山', icon:'#i-bag', tag:'鄂西北',
+   proverb:'', verify:'多源核实（省图书馆官方资料库）',
+   src:'湖北省图书馆·武当民俗',
+   desc:'子孙备香烛、火纸、供飨上坟祭祖，修缮坟茔（圆坟）；最后烧包袱送寒衣——用白纸、黄纸、红纸或彩纸剪成棉袄、棉裤、棉帽、棉鞋，外带汗褂、衬裤以备换洗，包好后在包袱正面写祖先名字和"魂下受用"字样、写送寒衣子孙名字，背面写一"封"字，像中元节烧包袱一样焚化，"算是邮寄过去了"。'},
+  {grp:'华中', id:'hub-xy', name:'湖北襄阳', icon:'#i-fire', tag:'鄂北',
+   proverb:'', verify:'单方称·待核',
+   src:'自媒体（2022，今日头条）',
+   desc:'襄阳与豫西南连壤，民间把十月初一作"祭祖节"，晚辈提火纸、鞭炮、冥币上坟祭奠，讲究"祭晚不祭早"（下午/傍晚上坟）。'},
+  /* —— 华东 —— */
+  {grp:'华东', id:'sd-lz', name:'山东鲁中', icon:'#i-grain', tag:'淄博济南莱芜章丘',
+   proverb:'"十月一，上坟烧寒衣"', verify:'多源核实',
+   src:'山东地情档案《莱芜市志》 · 海报新闻 · 齐鲁晚报',
+   desc:'鲁中人上坟以秋收新粮、新收五谷为供，报一年收成；除烧纸钱外，用五色彩纸裁剪衣帽裤鞋焚于墓前或家门口。鲁中尤其流行傍晚在野外十字路口烧寒衣，兼为无后绝户孤魂施祭；新丧头三年用白纸糊衣（"新鬼不敢衣彩"）。章丘旧时城隍此日出巡，与清明、中元合称城隍三巡。'},
+  {grp:'华东', id:'sd-jd', name:'山东胶东·荣成', icon:'#i-grain', tag:'胶东半岛',
+   proverb:'"月日" · "鬼开门"', verify:'单方称·待核',
+   src:'荣成市人民政府·荣成民俗《月日》',
+   desc:'荣成称十月初一为"月日"，俗称"鬼开门"（地府放鬼归阳，次年清明收押）。家家上坟添土祭祖在午饭前完成，午饭吃饽饽菜肴丰盛、晚饭吃饺子；坟前烧旧衣或纸衣或多烧纸钱让鬼魂自去"买衣"。此日也是农活"地净场光"后辞工日。'},
+  {grp:'华东', id:'js-nj', name:'江苏南京', icon:'#i-bowl', tag:'金陵古都',
+   proverb:'"打铁打到十月朝，家家门口把纸烧"', verify:'多源核实',
+   src:'我苏网转南京晨报 · 松阳新闻网',
+   desc:'南京称十月朝，与清明、中元并称三大祭鬼拜坟日。煮红豆饭以夜奠（新赤豆+新糯米让祖先"尝新"）；门前焚烧纸糊或彩印的衣裤鞋帽；去坟头祭焚并用新土覆墓取意"保暖"。有"男磕头不哭、女哭不磕头"规矩；十字路口另焚五色纸赈绝户孤魂。旧时十月朝还是南京城隍"放鬼"出巡日。'},
+  {grp:'华东', id:'js-sn', name:'江苏苏南', icon:'#i-grain', tag:'苏州无锡常州',
+   proverb:'"十月朝，吃糍团，送寒衣岗饭"', verify:'多源核实',
+   src:'上观新闻 · 识典古籍《清嘉录》 · 财新朱学东文 · 故宫博物院PDF',
+   desc:'苏州一带十月一乃"烧衣节"，自南宋以来沿袭未断：周密《武林旧事》"十月朔，都人出郊拜墓，用绵裘楮衣之类"；清顾禄《清嘉录·十月朝》"人无贫富，皆祭其先，多烧冥衣之属，谓之烧衣节"。常武一带新稻上场后以新糯米拌芝麻白糖舂糍团，一盘供祖先灵前、端糍团酒肉上祖坟。'},
+  {grp:'华东', id:'js-zj', name:'江苏镇江', icon:'#i-bowl', tag:'京口丹徒',
+   proverb:'', verify:'多源核实',
+   src:'镇江市史志办公室《京口区志》《丹徒县志》 · 澎湃新闻方志研究',
+   desc:'镇江十月初一俗称"十月朝"也称"寒衣节"，家家吃糍粑饭或红豆糯米饭（糯米蒸饭搓团子滚熟芝麻屑）；一说吃红豆饭是"为苍蝇饯行"。吃完便到城隍庙看城隍出巡游街。相传孟姜女送寒衣曾路经丹徒。'},
+  {grp:'华东', id:'ah-hb', name:'安徽淮北', icon:'#i-fire', tag:'皖北',
+   proverb:'"早清明晚十一"', verify:'多源核实',
+   src:'中共淮北市委党史和地方志研究室 · 亳州晚报',
+   desc:'淮北地方志：十月初一是三个鬼节中唯一"纯粹的鬼节"，叫"冥阴节""哭节"，"最突出的是送寒衣"。把彩纸剪糊成的冥衣鞋帽（新丧头三年用白纸）大多在祖坟前焚化，或晚间在门外奠而焚之。清明可提前不可推后；十月一可错后不可提前。'},
+  {grp:'华东', id:'ah-wn', name:'安徽皖南黟县', icon:'#i-house', tag:'徽州山区',
+   proverb:'', verify:'单方称·待核',
+   src:'网络转载《冬季节日》条目',
+   desc:'皖南黟县一带十月初一农事已毕，用纸剪糊成冬衣、买纸钱冥币元宝到祖坟前烧化；此日已出嫁的女儿须回娘家为已故亲人烧钱纸。皖南整体受江南冬至祭祖影响更大，此条仅见网络转载。'},
+  {grp:'华东', id:'zj-hz', name:'浙江杭州', icon:'#i-map', tag:'南宋临安故地',
+   proverb:'吴自牧《梦粱录》"士庶以十月节出郊扫松，祭祀坟茔"', verify:'多源核实',
+   src:'汉典古籍《梦粱录》 · 乾隆《杭州府志》 · 《西湖游览志余》',
+   desc:'杭州为南宋临安故地，十月朔出郊拜墓古俗自宋沿袭：朝廷赐锦袍"授衣"；士庶出郊"扫松"祭祀坟茔。清乾隆《杭州府志》："都人士庶于十月节出郊扫松拜墓，用绵球楮衣之类……自朔日至月晦不绝"——拜墓可从初一持续到月底。另剪纸衣施无主孤鬼。'},
+  {grp:'华东', id:'zj-sy', name:'浙江松阳', icon:'#i-fire', tag:'浙西南山区',
+   proverb:'', verify:'多源核实（方志学者署名文章）',
+   src:'松阳新闻网洪关旺（引民国《松阳县志》）',
+   desc:'松阳旧称十月初一为"寒衣节""送衣节"。民国《松阳县志》：清明、中元、十月朔三次抬城隍至厉坛公祭无祀鬼神；各户另有私祭祖先，形式类中元"烧斛"但加纸衣。1950 年厉坛拆废后寒衣节淡出，当代松阳人把送寒衣并入冬至祭祀。'},
+  {grp:'华东', id:'sh-ld', name:'上海', icon:'#i-bowl', tag:'江南东缘',
+   proverb:'倪绳中《南汇县竹枝词》"炉节欣逢十月朝，开炉祀祖饼初烧"', verify:'多源核实（结论：开炉祭先非焚衣）',
+   src:'故宫博物院PDF · 澎湃新闻方云文（引《历年记》《瀛壖杂志》） · 上观新闻',
+   desc:'重要纠偏：上海旧俗不是典型"门外焚纸衣送寒衣"，而是"十月朝开炉做饼祭先"。明姚廷辚《历年记》"世俗以十月初一为下元节，大家小户必祭先，为农事告成也"；清王韬《瀛壖杂志》"沪俗于十月朔日开炉煮饼，献于家祠，故称炉节"。冯其庸口述自传里上海读者指出《红楼梦》"十月一"是北方送寒衣风俗——反证上海本地人对十月一送寒衣一度不熟悉。'},
+  /* —— 西南 —— */
+  {grp:'西南', id:'sc-bs', name:'四川', icon:'#i-fire', tag:'巴蜀',
+   proverb:'', verify:'多源核实',
+   src:'四川省地方志《民间节祭俗》 · 省情网',
+   desc:'四川省地方志明列"十月一日送寒衣，民焚纸衣，以糍粑祀生"。成都平原、川东另有"寒节"俗称：嫁出去的女儿回娘家为逝去长辈剪制寒衣；入夜一家到村头或宅外净地，长辈用灰画一个留口圆圈，圈内焚寒衣纸钱，圈外先烧少量纸犒赏五方土地。成都重庆 1990 年代后禁燃烟火，多简化为路口或陵园遥祭。'},
+  {grp:'西南', id:'sc-dl', name:'四川丹棱', icon:'#i-grain', tag:'十月一祀牛神',
+   proverb:'', verify:'多源核实',
+   src:'广东文史网（引光绪《丹棱县志》）',
+   desc:'光绪《丹棱县志》：十月一要"祀牛神"，把蒸熟糯米捣碎喂牛、"以其余穿牛角"，犒劳耕牛一年力田之勤——蜀地十月一兼具"祭亡送寒衣"与"报赛慰农"双重意涵。'},
+  {grp:'西南', id:'cq-bq', name:'重庆', icon:'#i-snow', tag:'巴渝',
+   proverb:'"十月一，送寒衣"', verify:'多源核实',
+   src:'重庆长安网 · 重庆出版集团《中国传统岁时节俗》 · 广东文史网',
+   desc:'重庆母亲辈每年为已故长辈剪纸衣——男装多用黑或棕色、女装带花点（以颜色分男女），衣裤尺寸象征性极小，连同纸钱入夜在村头净地焚化。因十月朔与下元相近，川东民间常把剪纸衣焚祖混同下元行事；夔州（奉节）自古有杜甫诗《十月一日》所咏"蒸裹、焦糟"节物。'},
+  {grp:'西南', id:'yn-tc', name:'云南滇西', icon:'#i-map', tag:'腾冲龙陵（待核）',
+   proverb:'', verify:'单方称·待核',
+   src:'个人散文（非权威）',
+   desc:'滇西地方记述称腾冲、龙陵一带汉族称十月初一为"十月朝"，有此日上坟祭扫、烧纸衣纸钱之俗；但目前仅见个人散文记述，未获方志或权威媒体交叉印证。'},
+  /* —— 华南 —— */
+  {grp:'华南', id:'gd-hk', name:'广东客家', icon:'#i-bridge', tag:'梅州惠州',
+   proverb:'"十月朝，糍粑粄子碌碌烧"', verify:'多源核实',
+   src:'梅州日报 · 惠州民间文化网 · 南方+',
+   desc:'客家人把十月初一叫"十月朝"。秋收完毕，家家把新收糯米打粉蒸熟趁热舂成糍粑，包花生芝麻糖（或做米粄子、苎叶粄），先告慰祖先、劳谢耕牛，再全家同食、馈送亲友。须辨明：客家"十月朝"内核是做糍粑庆丰收、慰耕牛、祭祖尝新，北方式"焚纸衣送亡"在广东客家并非主流。'},
+  {grp:'华南', id:'gx-hk', name:'广西客家', icon:'#i-bridge', tag:'宜州宾阳陆川',
+   proverb:'', verify:'多源核实（务必呈现"今已淡化"限定）',
+   src:'广西地情网《宜州客家文化习俗》 · 中国作家网陈国玺《寒衣节》',
+   desc:'《广西地方志》宜州客家文化专文：十月初一客家人称"十月朝"，"是河北一带传统节日寒衣节，这是客家人南迁后一直保留沿袭下来的客家节日，节日旨在为先祖送寒衣，祭祖魂；今已淡化，仅为做糍粑、家人聚而已"。宾阳、陆川等地客家十月初一前后有祭扫祖坟、焚送纸衣之俗，规模不及中元。'},
+  {grp:'华南', id:'fj-mb', name:'福建闽北', icon:'#i-grain', tag:'建宁府一带',
+   proverb:'', verify:'多源核实',
+   src:'闽南网引《建宁府志》《南粤志》',
+   desc:'《建宁府志》："十月朔，谓之十月朝，是日为豆米糍，以祀先，然后交相馈遗"；《南粤志》："十月一日，闽中皆作米糍及京饨，以祀先祖，盖告冬之义也。"闽地十月未苦寒，"送寒衣"色彩弱，核心是尝新糍、报冬祭祖。注意勿写成"福建普遍送寒衣"。'},
+  {grp:'华南', id:'fj-fz', name:'福建福州', icon:'#i-map', tag:'闽都城隍赛会',
+   proverb:'', verify:'多源核实（结论：福州寒衣节=城隍出巡）',
+   src:'福州史志网《旧日城隍出巡撷影》 · 福州市政府《福州岁时习俗》',
+   desc:'福州旧俗一年城隍出巡三次（三巡会）：清明、中元、十月初一（或十月十五下元）。九月廿六开堂设祭演剧，十月初一城隍出游城内、次日游南台，仪仗极盛。这是城隍祭孤/解厄的官方赛会，不等于百姓家家焚纸送寒衣——福州人焚烧纸衣供祖先明确列在中元与中秋。'},
+  {grp:'华南', id:'gx-nn', name:'广西南宁', icon:'#i-bridge', tag:'桂中南（待核）',
+   proverb:'', verify:'单方称·待核（日期与主流不符）',
+   src:'家谱网等（非权威）',
+   desc:'网络流传说法称南宁多在农历十月初十（非初一）修理祖坟、冬祭，制纸衣焚于坟前叫"送寒衣"。仅见家谱网/博客类来源，无地方志或政府官网印证，且日期与主流寒衣节不一致，采信须谨慎。'},
+  /* —— 无此俗 / 不盛行（如实对照） —— */
+  {grp:'无此俗', id:'none-hn', name:'湖南', icon:'#i-map', tag:'无此俗',
+   proverb:'', verify:'有依据',
+   src:'多源对照（见正文）',
+   desc:'十月一非湖南主要祭祀节点，湖南最重七月半"烧包"（岳阳、长沙等地详载）；个别称湖南"烧寒衣"为自媒体个人博文，无地方志支持。'},
+  {grp:'无此俗', id:'none-jx', name:'江西', icon:'#i-map', tag:'无此俗',
+   proverb:'', verify:'有依据',
+   src:'南昌市政府非遗名录对照',
+   desc:'南昌市政府非遗名录（126 项）与民俗 23 项均无"寒衣节"独立条目；网络"烧包袱"说与南方中元/冬至通俗混同，不能坐实为十月朔专属。'},
+  {grp:'无此俗', id:'none-gz', name:'贵州', icon:'#i-map', tag:'无此俗',
+   proverb:'', verify:'有依据',
+   src:'省政府/民政厅资料对照',
+   desc:'农历十月为苗年（十月岁首）、彝族十月年；汉族祭亡以清明、中元（七月半烧纸袱）为主，无十月一送寒衣通例。'},
+  {grp:'无此俗', id:'none-hn2', name:'海南', icon:'#i-map', tag:'无此俗',
+   proverb:'', verify:'有依据',
+   src:'多源对照（见正文）',
+   desc:'汉族多为闽粤移民后裔，祭亡重清明/中秋/冬至；"十月未寒"缺送寒衣气候心理基础；无任何权威记载。'},
+  {grp:'无此俗', id:'none-xz', name:'西藏', icon:'#i-map', tag:'无此俗',
+   proverb:'', verify:'有依据',
+   src:'多源对照（见正文）',
+   desc:'藏族丧葬祭祀体系（天葬、酥油灯祭、藏历新年等）与汉俗寒衣节完全无涉。'},
+  {grp:'无此俗', id:'none-mn', name:'福建闽南', icon:'#i-map', tag:'无此俗',
+   proverb:'', verify:'有依据',
+   src:'多源对照（见正文）',
+   desc:'仅当代陵园营销文案提"摆纸寒衣"，非方志传统俗；闽南祭亡重清明、中秋、普渡。'},
+  {grp:'无此俗', id:'none-gf', name:'广东广府/潮汕', icon:'#i-map', tag:'无此俗',
+   proverb:'', verify:'有依据',
+   src:'多源对照（见正文）',
+   desc:'无十月一送寒衣方志通例；祭亡重清明、中元（潮汕普渡施孤）、冬节。'},
+  {grp:'无此俗', id:'none-zhe', name:'浙江甬温绍', icon:'#i-map', tag:'不盛行',
+   proverb:'', verify:'有依据',
+   src:'多源对照（见正文）',
+   desc:'通检未见十月朔送寒衣的地方志/权威民俗记载；浙东浙南祭祖重心在清明、冬至、除夕、中元。'}
+];
+let customsSel = 0;      // 当前选中组下标
+let customsItem = -1;    // 当前展开条目
+function renderCustoms(){
+  const nav=byId('customs-nav');nav.innerHTML='';
+  CUSTOMS_GROUPS.forEach((g,i)=>{
+    const b=document.createElement('button');b.type='button';b.className='chip'+(i===customsSel?' sel':'');
+    b.textContent=g;
+    b.addEventListener('click',()=>{customsSel=i;customsItem=-1;renderCustoms();});
+    nav.appendChild(b);
+  });
+  const panel=byId('customs-panel');
+  const items=CUSTOMS.filter(c=>c.grp===CUSTOMS_GROUPS[customsSel]);
+  if(customsItem<0){
+    // 组内条目列表
+    panel.innerHTML='<div class="c-list">'+items.map((c,i)=>{
+      const vtag=c.verify==='多源核实'?'<span class="v-ok">已核实</span>':'<span class="v-warn">待核</span>';
+      return '<button type="button" class="c-item" data-i="'+i+'">'
+        +mark(c.name,20)+'<span class="ci-nm">'+esc(c.name)+'</span>'
+        +'<span class="ci-pv">'+esc(c.proverb||c.tag)+'</span>'+vtag+'</button>';
+    }).join('')+'</div>'
+      +(CUSTOMS_GROUPS[customsSel]==='无此俗'
+        ?'<div class="c-note">寒衣节本质是北方（黄河流域）悼亡节，以下地区无此俗或不盛行——如实标注，不强行配对动画。</div>'
+        :'');
+    panel.querySelectorAll('.c-item').forEach(b=>{
+      b.addEventListener('click',()=>{customsItem=+b.dataset.i;renderCustoms();});
+    });
+  }else{
+    const c=items[customsItem];
+    const vtag=c.verify==='多源核实'?'<span class="v-ok">多源核实</span>':'<span class="v-warn">单方称·待核</span>';
+    panel.innerHTML=
+      '<div class="c-region">'+mark(c.name,26)+esc(c.name)+' <span class="c-tag">'+esc(c.tag)+'</span></div>'
+      +(c.proverb?'<div class="c-proverb">'+esc(c.proverb)+'</div>':'')
+      +'<div class="c-desc">'+esc(c.desc)+'</div>'
+      +'<div class="c-src">风俗参考：'+esc(c.src)+'<br>核实状态：'+vtag+'</div>'
+      +'<button type="button" class="btn ghost c-back" style="margin-top:14px">← 返回列表</button>';
+    panel.querySelector('.c-back').addEventListener('click',()=>{customsItem=-1;renderCustoms();});
+  }
+}
+byId('view-customs').querySelector('[data-customs-back]').addEventListener('click',()=>go(0));
+
+/* ================= 放天灯 ================= */
+let lanCtx=null,lanRaf=null,lanStars=[],lan={x:0,y:0,s:1,t0:0,fly:false,y0:0};
+function sizeLanternCanvas(){
+  const cv=byId('lanternCanvas'),r=cv.getBoundingClientRect();
+  if(r.width===0)return;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.width=r.width*dpr;cv.height=r.height*dpr;
+  lanCtx=cv.getContext('2d');lanCtx.setTransform(dpr,0,0,dpr,0,0);
+  const W=r.width,H=r.height;
+  lanStars=[];
+  const n=Math.min(70,Math.round(W/20));
+  for(let i=0;i<n;i++){
+    const big=Math.random()<0.16;
+    lanStars.push({
+      x:Math.random()*W,y:Math.random()*H*0.92,
+      r:(big?1.6:0.5)+Math.random()*(big?1.6:1.1),
+      a:(big?0.5:0.18)+Math.random()*0.4,
+      ph:Math.random()*6.28, sp:0.5+Math.random()*2,
+      glow:big, tw:0.4+Math.random()*0.6
+    });
+  }
+  lan.y=H*0.82;lan.y0=H*0.82;lan.x=W/2;lan.s=1;lan.fly=false;
+}
+function drawLantern(t){
+  const R=byId('lanternCanvas').getBoundingClientRect(),W=R.width,H=R.height;
+  lanCtx.clearRect(0,0,W,H);
+  // 夜空渐变背景
+  const sky=lanCtx.createLinearGradient(0,0,0,H);
+  sky.addColorStop(0,'#0a1224');
+  sky.addColorStop(.45,'#0d1a33');
+  sky.addColorStop(.75,'#12213f');
+  sky.addColorStop(1,'#1a1b28');
+  lanCtx.fillStyle=sky;lanCtx.fillRect(0,0,W,H);
+  // 远处淡云
+  lanCtx.fillStyle='rgba(120,140,180,.05)';
+  for(let i=0;i<4;i++){
+    const dx=(Math.sin(t/3000+i*2)*30+i*150)%(W+120)-60;
+    const dy=H*0.15+i*H*0.18;
+    lanCtx.beginPath();lanCtx.ellipse(dx,dy,W*0.4,22,0,0,6.28);lanCtx.fill();
+  }
+  // 银河带（微弱星云）
+  const mg=lanCtx.createLinearGradient(0,H*0.25,0,H*0.55);
+  mg.addColorStop(0,'rgba(200,215,255,0)');
+  mg.addColorStop(.5,'rgba(200,215,255,.05)');
+  mg.addColorStop(1,'rgba(200,215,255,0)');
+  lanCtx.fillStyle=mg;
+  lanCtx.beginPath();lanCtx.ellipse(W*0.5,H*0.42,W*0.9,46,0.12,0,6.28);lanCtx.fill();
+  // 星星（闪光 + 光晕）
+  lanStars.forEach(s=>{
+    const tw=0.55+0.45*Math.sin(t/1000*s.sp+s.ph);
+    const alpha=s.a*(s.tw*0.5+tw*0.5);
+    if(s.glow){
+      const gl=lanCtx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*3.5);
+      gl.addColorStop(0,'rgba(240,235,220,'+(alpha*0.5)+')');
+      gl.addColorStop(1,'rgba(240,235,220,0)');
+      lanCtx.fillStyle=gl;lanCtx.beginPath();lanCtx.arc(s.x,s.y,s.r*3.5,0,6.28);lanCtx.fill();
+    }
+    lanCtx.fillStyle='rgba(242,235,210,'+alpha+')';
+    lanCtx.beginPath();lanCtx.arc(s.x,s.y,s.r,0,6.28);lanCtx.fill();
+    if(s.glow){
+      lanCtx.fillStyle='rgba(255,255,255,'+(alpha*0.9)+')';
+      lanCtx.fillRect(s.x-0.6,s.y-0.6,1.2,1.2);
+    }
+  });
+  // 天灯（更真实：竹骨 + 纸罩 + 底部烛火）
+  const cx=lan.x,cy=lan.y,size=Math.max(28,52*lan.s);
+  const sway=Math.sin(t/1400)*7*lan.s;
+  // 暖光晕
+  const g=lanCtx.createRadialGradient(cx,cy-size*0.6,0,cx,cy-size*0.6,size*3);
+  g.addColorStop(0,'rgba(240,207,143,.32)');g.addColorStop(.4,'rgba(232,178,92,.13)');g.addColorStop(1,'rgba(232,178,92,0)');
+  lanCtx.fillStyle=g;lanCtx.beginPath();lanCtx.arc(cx,cy-size*0.6,size*3,0,6.28);lanCtx.fill();
+  // 上升尾焰（底部微光）
+  const tail=lanCtx.createLinearGradient(0,cy+size*0.6,0,cy+size*1.5);
+  tail.addColorStop(0,'rgba(240,207,143,.18)');tail.addColorStop(1,'rgba(240,207,143,0)');
+  lanCtx.fillStyle=tail;lanCtx.fillRect(cx-size*0.5,cy+size*0.5,size,size*1.1);
+  lanCtx.save();lanCtx.translate(cx+sway,cy);lanCtx.scale(lan.s,lan.s);
+  const bw=size, bh=size*1.15;
+  // 罩体（纸罩，上窄下宽）
+  const sh=lanCtx.createLinearGradient(0,-bh*0.58,0,bh*0.52);
+  sh.addColorStop(0,'rgba(245,220,160,.42)');sh.addColorStop(1,'rgba(232,178,92,.28)');
+  lanCtx.fillStyle=sh;lanCtx.strokeStyle='rgba(196,140,66,.8)';lanCtx.lineWidth=1.6;
+  lanCtx.beginPath();
+  lanCtx.moveTo(-bw*0.62,bh*0.52);
+  lanCtx.quadraticCurveTo(-bw*0.78,-bh*0.62,0,-bh*0.62);
+  lanCtx.quadraticCurveTo(bw*0.78,-bh*0.62,bw*0.62,bh*0.52);
+  lanCtx.closePath();lanCtx.fill();lanCtx.stroke();
+  // 竹骨架：横圈 + 竖肋
+  lanCtx.strokeStyle='rgba(140,92,40,.7)';lanCtx.lineWidth=1.1;
+  for(let i=0;i<4;i++){
+    const yy=-bh*0.62+(bh*0.62+bh*0.52)/4*(i+0.5);
+    const halfW=bw*0.62*(1-Math.pow(yy*1.6/bh,2)*0.6);
+    lanCtx.beginPath();lanCtx.moveTo(-halfW,yy);lanCtx.lineTo(halfW,yy);lanCtx.stroke();
+  }
+  lanCtx.beginPath();lanCtx.moveTo(0,-bh*0.62);lanCtx.lineTo(0,bh*0.52);lanCtx.stroke();
+  lanCtx.beginPath();lanCtx.moveTo(-bw*0.5,0);lanCtx.lineTo(bw*0.5,0);lanCtx.stroke();
+  // 底部竹圈（烛火托）
+  lanCtx.strokeStyle='rgba(140,92,40,.8)';lanCtx.lineWidth=1.6;
+  lanCtx.beginPath();lanCtx.moveTo(-bw*0.62,bh*0.52);lanCtx.lineTo(bw*0.62,bh*0.52);lanCtx.stroke();
+  // 底部烛火
+  const fy=bh*0.62;
+  const fg=lanCtx.createRadialGradient(0,fy,0,0,fy,bh*0.34);
+  fg.addColorStop(0,'rgba(255,238,200,.95)');fg.addColorStop(.5,'rgba(240,158,70,.8)');fg.addColorStop(1,'rgba(217,90,40,0)');
+  lanCtx.fillStyle=fg;
+  const fl=Math.sin(t/110)*1.5;
+  lanCtx.beginPath();
+  lanCtx.moveTo(-bh*0.09,fy+bh*0.05);
+  lanCtx.quadraticCurveTo(-bh*0.13,fy-bh*0.12+fl,0,fy-bh*0.3+fl*1.4);
+  lanCtx.quadraticCurveTo(bh*0.13,fy-bh*0.12-fl,bh*0.09,fy+bh*0.05);
+  lanCtx.closePath();lanCtx.fill();
+  // 罩上寄语小字
+  lanCtx.fillStyle='rgba(90,52,20,.55)';lanCtx.font='8px "Noto Serif SC",serif';lanCtx.textAlign='center';
+  const msg=(STATE.lanternMsg||'愿安好').slice(0,10);
+  lanCtx.fillText(msg,0,bh*0.02);
+  lanCtx.restore();
+}
+function startLantern(){
+  sizeLanternCanvas();
+  byId('lantern-done').classList.remove('show');
+  byId('btn-launch-lantern').style.display='';
+  byId('btn-launch-lantern').disabled=false;
+  byId('lantern-note').textContent='点一盏灯，愿思念抵达';
+  lan.fly=false;lan.s=1;
+  if(lanRaf)cancelAnimationFrame(lanRaf);
+  (function loop(t){
+    if(!byId('view-lantern').classList.contains('active')){lanRaf=null;return;}
+    const R=byId('lanternCanvas').getBoundingClientRect(),H=R.height;
+    if(lan.fly){
+      const p=Math.min(1,(t-lan.t0)/9000);
+      const e=1-Math.pow(1-p,3);
+      lan.y=lan.y0+(H*0.06-lan.y0)*e;
+      lan.s=1-0.55*e;
+      if(p>=1){lan.fly=false;byId('lantern-note').textContent='天灯已远，愿思念抵达';
+        byId('lantern-done-msg').textContent=STATE.lanternMsg||'';
+        byId('lantern-done').classList.add('show');byId('btn-launch-lantern').style.display='none';}
+    }
+    drawLantern(t);
+    lanRaf=requestAnimationFrame(loop);
+  })(performance.now());
+}
+(function(){
+  const preset=byId('lantern-preset'), area=byId('lantern-msg');
+  LANTERN_PRESETS.forEach(m=>{
+    const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=m;
+    b.addEventListener('click',()=>{area.value=m;area.focus();document.querySelectorAll('#lantern-preset .chip').forEach(c=>c.classList.remove('sel'));b.classList.add('sel');});
+    preset.appendChild(b);
+  });
+  byId('btn-launch-lantern').addEventListener('click',()=>{
+    if(lan.fly)return;
+    STATE.lanternMsg=area.value.trim();
+    if(!STATE.lanternMsg){toast('先在灯上写一句祝福吧');area.focus();return;}
+    lan.fly=true;lan.t0=performance.now();
+    byId('btn-launch-lantern').disabled=true;
+    byId('lantern-note').textContent='一盏天灯，正载着祝愿缓缓升向夜空…';
+  });
+})();
+
+/* ================= 全局飞灰粒子 ================= */
+(function(){
+  const cv=byId('embers'),ctx=cv.getContext('2d');
+  let W,H,dpr=Math.min(window.devicePixelRatio||1,2);
+  const parts=[];
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function size(){W=window.innerWidth;H=window.innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+  size();window.addEventListener('resize',size);
+  const N=Math.min(42,Math.round(W/26));
+  for(let i=0;i<N;i++)parts.push(make());
+  function make(){return {x:Math.random()*W,y:Math.random()*H,r:0.6+Math.random()*1.9,v:0.12+Math.random()*0.4,a:0.05+Math.random()*0.28,ph:Math.random()*6.28};}
+  (function loop(){
+    ctx.clearRect(0,0,W,H);
+    parts.forEach(p=>{
+      p.y-=p.v;p.x+=Math.sin(performance.now()/3000+p.ph)*0.18;
+      if(p.y<-8){Object.assign(p,make());p.y=H+6;}
+      ctx.fillStyle='rgba(232,178,92,'+p.a+')';
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.28);ctx.fill();
+    });
+    if(!reduced)requestAnimationFrame(loop);
+  })();
+})();
+
+/* 启动 */
+go(0);
+</script>
+</body>
+</html>
